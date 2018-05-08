@@ -1,0 +1,20 @@
+{
+  "name": "mws-restaurant-reviews",
+  "version": "1.0.0",
+  "description": "Restaurant Review app - a project for Mobile Web Specialist program",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "python -m SimpleHTTPServer 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amiryy/mws-restaurant-reviews.git"
+  },
+  "author": "Amiry",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amiryy/mws-restaurant-reviews/issues"
+  },
+  "homepage": "https://github.com/amiryy/mws-restaurant-reviews#readme"
+}
