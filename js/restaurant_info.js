@@ -79,10 +79,15 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 
     const day = document.createElement('td');
     day.innerHTML = key;
+    day.setAttribute('class', 'day-cell');
     row.appendChild(day);
 
     const time = document.createElement('td');
-    time.innerHTML = operatingHours[key];
+    operatingHours[key].split(', ').forEach(part => {
+      const hoursPart = document.createElement('span');
+      hoursPart.innerHTML = part;
+      time.appendChild(hoursPart);
+    });
     row.appendChild(time);
 
     hours.appendChild(row);
@@ -125,7 +130,17 @@ createReviewHTML = (review) => {
   li.appendChild(date);
 
   const rating = document.createElement('p');
-  rating.innerHTML = `Rating: ${review.rating}`;
+  for (let i = 1; i < 6; i++) {
+    let star = document.createElement('span');
+    if(i <= review.rating){
+      star.innerHTML = '&#9733';
+      star.style.color = '#FFD200';
+      star.style.textShadow = '1px 1px #7a7a7a';
+    } else {
+      star.innerHTML = '&#9734';
+    }
+    rating.appendChild(star)
+  }
   li.appendChild(rating);
 
   const comments = document.createElement('p');

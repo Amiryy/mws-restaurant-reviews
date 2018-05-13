@@ -39,6 +39,9 @@ h1, h2, h3, h4, h5, h6 {
 article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
 	display: block;
 }
+header {
+  background-color: #252831;
+}
 #maincontent {
   background-color: #f3f3f3;
   min-height: 100%;
@@ -56,13 +59,13 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 nav {
   width: 100%;
   height: 80px;
-  background-color: #252831;
   text-align: center;
   display: flex;
   align-items: center;
 }
 nav h1 {
-  margin: auto;
+  margin: 10px auto;
+  padding: 10px;
 }
 nav h1 a {
   color: #fff;
@@ -94,7 +97,13 @@ nav h1 a {
   line-height: 1;
   margin: 0 20px;
 }
-.filter-options select {
+.filter-selectors {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex: 0 1 auto;
+}
+.filter-selectors select {
   background-color: white;
   border: 1px solid #fff;
   font-family: Arial,sans-serif;
@@ -120,6 +129,8 @@ nav h1 a {
   max-width: 95%;
 }
 #restaurants-list li {
+  display: flex;
+  flex-direction: column;
   background-color: #fff;
   border: 2px solid #ccc;
   font-family: Arial,sans-serif;
@@ -163,5 +174,24 @@ nav h1 a {
   text-transform: uppercase;
 }
 
-@media only screen and (max-width: 750px) {
+@media only screen and (max-width: 800px) {
+  .filter-options {
+    flex-direction: column;
+    height: auto;
+    padding: 5px;
+  }
+  .filter-selectors {
+    width: 100%;
+    justify-content: center;
+  }
+  nav {
+    padding: 0;
+    height: auto;
+  }
+  nav h1 {
+    padding: 0;
+  }
+  nav h1 a{
+    font-size: 0.8rem;
+  }
 }
