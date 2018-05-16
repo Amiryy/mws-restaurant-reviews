@@ -123,24 +123,26 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
 createReviewHTML = (review) => {
   const li = document.createElement('li');
   const name = document.createElement('p');
-  name.innerHTML = review.name;
+  name.innerHTML = `from ${review.name}`;
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = `at ${review.date}`;
   li.appendChild(date);
 
   const rating = document.createElement('p');
   for (let i = 1; i < 6; i++) {
     let star = document.createElement('span');
     if(i <= review.rating){
+      //Convert rating to stars
       star.innerHTML = '&#9733';
       star.style.color = '#FFD200';
       star.style.textShadow = '1px 1px #7a7a7a';
     } else {
       star.innerHTML = '&#9734';
     }
-    rating.appendChild(star)
+    rating.appendChild(star);
+    rating.setAttribute('aria-label', `rated ${review.rating} of 5`);
   }
   li.appendChild(rating);
 

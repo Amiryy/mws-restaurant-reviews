@@ -42,13 +42,20 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 header {
   background-color: #252831;
 }
+
+/* shouldn't appear on screen */
+.screen-reader-content {
+  position: absolute;
+  left: -999px;
+}
+
 #maincontent {
   background-color: #f3f3f3;
   min-height: 100%;
 }
 #footer {
-  background-color: #444;
-  color: #aaa;
+  background-color: #252831;
+  color: #c4c4c4;
   font-size: 0.7rem;
   letter-spacing: 1px;
   padding: 15px;
@@ -84,10 +91,10 @@ nav h1 a {
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   width: 100%;
   height: 50px;
-  background-color: #3397DB;
+  background-color: #005C7D;
   align-items: center;
 }
 .filter-options h2 {
@@ -113,6 +120,9 @@ nav h1 a {
   margin: 10px;
   padding: 0 10px;
   width: 200px;
+}
+.filter-selectors select:focus {
+  filter: brightness(90%);
 }
 
 /* ====================== Restaurant Listing ====================== */
@@ -147,7 +157,7 @@ nav h1 a {
   max-width: 100%;
 }
 #restaurants-list li h1 {
-  color: #f18200;
+  color: #252831;
   font-family: Arial,sans-serif;
   font-size: 14pt;
   font-weight: 200;
@@ -162,7 +172,7 @@ nav h1 a {
   font-size: 11pt;
 }
 #restaurants-list li a {
-  background-color: orange;
+  background-color: #005C7D;
   border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;
@@ -173,6 +183,11 @@ nav h1 a {
   text-decoration: none;
   text-transform: uppercase;
 }
+#restaurants-list li a:focus {
+  outline: none;
+  background-color: #003c52;
+}
+
 
 @media only screen and (max-width: 800px) {
   .filter-options {
