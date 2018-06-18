@@ -155,6 +155,7 @@ nav h1 a {
   background-color: #ccc;
   display: block;
   margin: 0;
+  min-width: 100%;
   max-width: 100%;
 }
 #restaurants-list li h1 {
