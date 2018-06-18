@@ -11,18 +11,8 @@ var sourceMaps = require('gulp-sourcemaps');
 var imageMin = require('gulp-imagemin');
 var pngquant = require('imagemin-pngquant');
 
-gulp.task('default', ['copy-html', 'copy-images', 'styles', 'scripts-concat', 'scripts-copy'], function() {
-	gulp.watch('css/**/*.scss', ['styles']);
-	gulp.watch('js/**/*.js', ['scripts-concat']);
-	gulp.watch('/index.html', ['copy-html']);
-	gulp.watch('./dist/index.html').on('change', browserSync.reload);
-
-	browserSync.init({
-		server: './dist'
-	});
-});
-
-gulp.task('simple', ['styles-simple'], function() {
+//Simple Setup
+gulp.task('simple', function() {
   gulp.watch('css/**/*.scss', ['styles-simple']);
   gulp.watch('js/**/*.js').on('change', browserSync.reload);
   gulp.watch('css/**/*.css').on('change', browserSync.reload);
@@ -32,14 +22,26 @@ gulp.task('simple', ['styles-simple'], function() {
     server: './'
   });
 });
-gulp.task('styles-simple', function() {
-  gulp.src('css/**/*.scss')
-    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-    .pipe(autoprefixer({
-      browsers: ['last 2 versions']
+
+gulp.task('images', function() {
+  gulp.src('img/*')
+    .pipe(imageMin({
+      progressive: true,
+      use: [pngquant()]
     }))
-    .pipe(gulp.dest('./css'))
-    .pipe(browserSync.stream());
+    .pipe(gulp.dest('./img/quanted'))
+});
+
+//Build Setup
+gulp.task('default', ['copy-html', 'copy-images', 'styles', 'scripts-concat', 'scripts-copy'], function() {
+	gulp.watch('css/**/*.scss', ['styles']);
+	gulp.watch('js/**/*.js', ['scripts-concat']);
+	gulp.watch('/index.html', ['copy-html']);
+	gulp.watch('./dist/index.html').on('change', browserSync.reload);
+
+	browserSync.init({
+		server: './dist'
+	});
 });
 
 gulp.task('dist', [
