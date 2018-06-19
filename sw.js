@@ -40,7 +40,6 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request).then(response => {
       if (response) {
-        console.log('serving from cache... ', response.url);
         return response;
       }
       const requestClone = event.request.clone();

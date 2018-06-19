@@ -10,10 +10,11 @@ var babel = require('gulp-babel');
 var sourceMaps = require('gulp-sourcemaps');
 var imageMin = require('gulp-imagemin');
 var pngquant = require('imagemin-pngquant');
+var browserify = require('gulp-browserify');
 
 //Simple Setup
-gulp.task('simple', function() {
-  gulp.watch('css/**/*.scss', ['styles-simple']);
+gulp.task('simple', ['idb-transpile'], function() {
+  gulp.watch('js/idb/*.js', ['idb-transpile']);
   gulp.watch('js/**/*.js').on('change', browserSync.reload);
   gulp.watch('css/**/*.css').on('change', browserSync.reload);
   gulp.watch('./index.html').on('change', browserSync.reload);
@@ -31,7 +32,15 @@ gulp.task('images', function() {
     }))
     .pipe(gulp.dest('./img/quanted'))
 });
-
+//transpiling for idb promised library
+gulp.task('idb-transpile', function() {
+  gulp.src('js/idb/indexController.js')
+    .pipe(babel({
+      presets: ["es2015"]
+    }))
+    .pipe(browserify())
+    .pipe(gulp.dest('./js/idb/transpiled'));
+});
 //Build Setup
 gulp.task('default', ['copy-html', 'copy-images', 'styles', 'scripts-concat', 'scripts-copy'], function() {
 	gulp.watch('css/**/*.scss', ['styles']);
