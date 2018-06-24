@@ -30,11 +30,40 @@ var IdbController = function () {
       }
 
       this.dbPromise = _idb2.default.open('restaurant-reviews-app', 1, function (upgradeDb) {
-        var store = upgradeDb.createObjectStore('restaurants', {
-          keyPath: 'id'
-        });
+        switch (upgradeDb.oldVersion) {
+          case 0:
+            {
+              upgradeDb.createObjectStore('restaurants', {
+                keyPath: 'id'
+              });
+            }
+        }
       });
       return this.dbPromise;
+    }
+  }, {
+    key: 'storeData',
+    value: function storeData(data, storeName) {
+      this.dbPromise.then(function (db) {
+        if (!db) return;
+        var tx = db.transaction(storeName, 'readwrite');
+        var store = tx.objectStore(storeName);
+        data.forEach(function (restaurant) {
+          store.put(restaurant);
+        });
+      });
+    }
+  }, {
+    key: 'fetchData',
+    value: function fetchData(storeName) {
+      return this.dbPromise.then(function (db) {
+        if (!db) return;
+        var tx = db.transaction(storeName);
+        var store = tx.objectStore(storeName);
+        return store.getAll().then(function (data) {
+          return data;
+        });
+      });
     }
   }, {
     key: 'registerServiceWorker',
@@ -89,14 +118,8 @@ var IdbController = function () {
   return IdbController;
 }();
 
-var idbController = new IdbController();
-var dbPromise = idbController.openDataBase();
-dbPromise.then(function (db) {
-  var tx = db.transaction('restaurants', 'readwrite');
-  var store = tx.objectStore('restaurants');
-  store.put({ name: 'test', id: 1 });
-  return tx.complete;
-});
+self.idbController = new IdbController();
+self.idbController.openDataBase();
 },{"idb":2}],2:[function(require,module,exports){
 'use strict';
 

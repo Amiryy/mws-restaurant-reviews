@@ -1,3 +1,17 @@
+/**
+ * Register service worker
+ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
 // Common database helper functions.
 class DBHelper {
   // Database URL.
@@ -8,14 +22,21 @@ class DBHelper {
   }
   // Fetch all restaurants.
   static fetchRestaurants(callback) {
+    const storeName = 'restaurants';
     const url = DBHelper.DATABASE_URL;
+    const cachedData = self.idbController.fetchData(storeName);
     fetch(url).then(response => {
       if(response.status === 200) {
         return response.json();
       } else {
-        throw Error(response.statusText);
+        if(cachedData) {
+          return cachedData;
+        } else {
+          throw Error(response.statusText);
+        }
       }
     }).then(data => {
+      self.idbController.storeData(data, storeName);
       callback(null, data);
     }).catch(error => {
       callback(error, null);
