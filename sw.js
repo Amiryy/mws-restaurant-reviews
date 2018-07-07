@@ -37,8 +37,9 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+  const requestURL = new URL(event.request.url);
   event.respondWith(
-    caches.match(event.request).then(response => {
+    caches.match(requestURL.pathname).then(response => {
       if (response) {
         return response;
       }
