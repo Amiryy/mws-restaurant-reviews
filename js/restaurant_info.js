@@ -75,6 +75,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
  */
 fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
   const hours = document.getElementById('hours-table');
+  hours.innerHTML = '';
   for (let key in operatingHours) {
     const row = document.createElement('tr');
 
@@ -100,6 +101,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
+  container.innerHTML = '';
   const title = document.createElement('h3');
   title.innerHTML = 'Reviews';
   container.appendChild(title);
@@ -110,7 +112,8 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     container.appendChild(noReviews);
     return;
   }
-  const ul = document.getElementById('reviews-list');
+  const ul = document.createElement('ul');
+  ul.setAttribute('id', 'reviews-list');
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
@@ -158,7 +161,8 @@ createReviewHTML = (review) => {
  */
 fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
-  const li = document.createElement('li');
+
+  const li = document.getElementById('restaurant-name-breadcrumb');
   li.innerHTML = restaurant.name;
   breadcrumb.appendChild(li);
 };
