@@ -21,31 +21,32 @@ class DBHelper {
     return `http://localhost:${port}/restaurants/`;
   }
   // Fetch all restaurants.
-  static fetchRestaurants(callback) {
+  static async fetchRestaurants(callback) {
     const storeName = 'restaurants';
     const url = DBHelper.DATABASE_URL;
-    const cachedData = self.idbController.fetchData(storeName);
+    const cachedData = await self.idbController.fetchData(storeName);
+    if(cachedData && cachedData.length > 0) {
+      callback(null, cachedData);
+      console.log('Serving cached database')
+    }
     fetch(url).then(response => {
       if(response.status === 200) {
         return response.json();
       } else {
-        if(cachedData) {
-          return cachedData;
-        } else {
-          throw Error(response.statusText);
-        }
+        throw Error(response.statusText);
       }
     }).then(data => {
       self.idbController.storeData(data, storeName);
       callback(null, data);
+      console.log('cached database up to date')
     }).catch(error => {
       callback(error, null);
     });
   }
   // Fetch a restaurant by its ID.
-  static fetchRestaurantById(id, callback) {
+  static async fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    await DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -60,9 +61,9 @@ class DBHelper {
   }
 
   // Fetch restaurants by a cuisine type with proper error handling.
-  static fetchRestaurantByCuisine(cuisine, callback) {
+  static async fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    await DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -74,9 +75,9 @@ class DBHelper {
   }
 
   // Fetch restaurants by a neighborhood with proper error handling.
-  static fetchRestaurantByNeighborhood(neighborhood, callback) {
+  static async fetchRestaurantByNeighborhood(neighborhood, callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    await DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -88,13 +89,13 @@ class DBHelper {
   }
 
   // Fetch restaurants by a cuisine and a neighborhood with proper error handling.
-  static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
+  static async fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    await DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
-        let results = restaurants
+        let results = restaurants;
         if (cuisine !== 'all') { // filter by cuisine
           results = results.filter(r => r.cuisine_type === cuisine);
         }
@@ -107,32 +108,32 @@ class DBHelper {
   }
 
   // Fetch all neighborhoods with proper error handling.
-  static fetchNeighborhoods(callback) {
+  static async fetchNeighborhoods(callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    await DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
         // Get all neighborhoods from all restaurants
-        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
+        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
         // Remove duplicates from neighborhoods
-        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) === i)
+        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) === i);
         callback(null, uniqueNeighborhoods);
       }
     });
   }
 
   // Fetch all cuisines with proper error handling.
-  static fetchCuisines(callback) {
+  static async fetchCuisines(callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    await DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
         // Get all cuisines from all restaurants
-        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
+        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
         // Remove duplicates from cuisines
-        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) === i)
+        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) === i);
         callback(null, uniqueCuisines);
       }
     });
