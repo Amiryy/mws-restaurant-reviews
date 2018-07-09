@@ -3,15 +3,30 @@ let restaurants,
   cuisines;
  self.map = undefined;
  self.markers = [];
-
+ let lazyLoaded = false;
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  const bLazy = new Blazy({
+    selector: '.b-lazy',
+    success: lazyLoadSuccessFul
+  });
+  setTimeout(function(){
+    bLazy.revalidate();
+  }, 500);
   fetchNeighborhoods();
   fetchCuisines();
 });
 
+function lazyLoadSuccessFul(element) {
+  setTimeout(function(){
+    lazyLoaded = true;
+    const parent = element.parentNode;
+    parent.className = parent.className.replace('loading', '');
+    element.className = element.className.replace('loading', '');
+  }, 200);
+}
 /**
  * Fetch all neighborhoods and set their HTML.
  */
@@ -140,12 +155,15 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
  */
 createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
-
   const image = document.createElement('img');
+  const imageContainer = document.createElement('div');
+  imageContainer.setAttribute('class', 'container loading');
   image.className = 'restaurant-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.setAttribute('class', 'b-lazy loading');
   image.setAttribute('alt', `image of ${restaurant.name}`);
-  li.append(image);
+  image.setAttribute('data-src', DBHelper.imageUrlForRestaurant(restaurant));
+  imageContainer.append(image);
+  li.append(imageContainer);
 
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
