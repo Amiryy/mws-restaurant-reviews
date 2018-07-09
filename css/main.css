@@ -1,39 +1,5 @@
 @charset "utf-8";
 /* CSS Document */
-
-/* Lazy load styling */
-@keyframes spinner {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.b-lazy {
-  transition: opacity 0.5s ease-in-out;
-  max-width: 100%;
-  opacity: 1;
-}
-.b-lazy.loading {
-  opacity: 0;
-}
-.container.loading {
-  height: 200px;
-}
-.container.loading:after {
-   content: "";
-   box-sizing: border-box;
-   position: absolute;
-   top: 20%;
-   left: 50%;
-   width: 30px;
-   height: 30px;
-   margin-top: -15px;
-   margin-left: -15px;
-   border-radius: 50%;
-   border: 1px solid #cccccc;
-   border-top-color: #005C7D;
-   animation: spinner 0.6s linear infinite;
- }
-
 /* General Styling */
 * {
   box-sizing: border-box;
@@ -223,29 +189,4 @@ nav h1 a {
 #restaurants-list li a:focus {
   outline: none;
   background-color: #003c52;
-}
-
-@media only screen and (max-width: 800px) {
-  .filter-options {
-    flex-direction: column;
-    height: auto;
-    padding: 5px;
-  }
-  .filter-selectors {
-    width: 100%;
-    justify-content: center;
-  }
-  nav {
-    padding: 0;
-    height: auto;
-  }
-  nav h1 {
-    padding: 0;
-  }
-  nav h1 a{
-    font-size: 0.8rem;
-  }
-  #restaurants-list li {
-    width: 90%;
-  }
 }

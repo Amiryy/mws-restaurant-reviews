@@ -1,0 +1,32 @@
+/* Lazy load styling */
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.b-lazy {
+  transition: opacity 0.5s ease-in-out;
+  max-width: 100%;
+  opacity: 1;
+}
+.b-lazy.loading {
+  opacity: 0;
+}
+.container.loading {
+  height: 215px;
+}
+.container.loading:after {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  margin-left: -15px;
+  border-radius: 50%;
+  border: 1px solid #cccccc;
+  border-top-color: #005C7D;
+  animation: spinner 0.6s linear infinite;
+}

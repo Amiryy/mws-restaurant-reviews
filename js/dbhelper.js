@@ -27,7 +27,6 @@ class DBHelper {
     const cachedData = await self.idbController.fetchData(storeName);
     if(cachedData && cachedData.length > 0) {
       callback(null, cachedData);
-      console.log('Serving cached database')
     }
     fetch(url).then(response => {
       if(response.status === 200) {
@@ -38,7 +37,6 @@ class DBHelper {
     }).then(data => {
       self.idbController.storeData(data, storeName);
       callback(null, data);
-      console.log('cached database up to date')
     }).catch(error => {
       callback(error, null);
     });
