@@ -1,5 +1,3 @@
-import idb from 'idb';
-
 class IdbController {
   constructor() {
     if (!navigator.serviceWorker) {

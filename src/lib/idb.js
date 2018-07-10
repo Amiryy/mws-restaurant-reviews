@@ -1,126 +1,3 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _idb = require('idb');
-
-var _idb2 = _interopRequireDefault(_idb);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var IdbController = function () {
-  function IdbController() {
-    _classCallCheck(this, IdbController);
-
-    if (!navigator.serviceWorker) {
-      return Promise.resolve();
-    }
-    this.dbPromise = undefined;
-    this.registerServiceWorker();
-  }
-
-  _createClass(IdbController, [{
-    key: 'openDataBase',
-    value: function openDataBase() {
-      if (!navigator.serviceWorker) {
-        return Promise.resolve();
-      }
-
-      this.dbPromise = _idb2.default.open('restaurant-reviews-app', 1, function (upgradeDb) {
-        switch (upgradeDb.oldVersion) {
-          case 0:
-            {
-              upgradeDb.createObjectStore('restaurants', {
-                keyPath: 'id'
-              });
-            }
-        }
-      });
-      return this.dbPromise;
-    }
-  }, {
-    key: 'storeData',
-    value: function storeData(data, storeName) {
-      this.dbPromise.then(function (db) {
-        if (!db) return;
-        var tx = db.transaction(storeName, 'readwrite');
-        var store = tx.objectStore(storeName);
-        data.forEach(function (restaurant) {
-          store.put(restaurant);
-        });
-      });
-    }
-  }, {
-    key: 'fetchData',
-    value: function fetchData(storeName) {
-      return this.dbPromise.then(function (db) {
-        if (!db) return;
-        var tx = db.transaction(storeName);
-        var store = tx.objectStore(storeName);
-        return store.getAll().then(function (data) {
-          return data;
-        });
-      });
-    }
-  }, {
-    key: 'registerServiceWorker',
-    value: function registerServiceWorker() {
-      if (!navigator.serviceWorker) return;
-
-      var idbController = this;
-
-      navigator.serviceWorker.register('/sw.js').then(function (reg) {
-        if (!navigator.serviceWorker.controller) {
-          return;
-        }
-        if (reg.waiting) {
-          idbController.swUpdateReady(reg.waiting);
-          return;
-        }
-        if (reg.installing) {
-          idbController.trackSwInstall(reg.installing);
-          return;
-        }
-        reg.addEventListener('updatefound', function () {
-          idbController.trackSwInstall(reg.installing);
-        });
-      });
-
-      // Ensure refresh is only called once.
-      // This works around a bug in "force update on reload".
-      var refreshing = void 0;
-      navigator.serviceWorker.addEventListener('controllerchange', function () {
-        if (refreshing) return;
-        window.location.reload();
-        refreshing = true;
-      });
-    }
-  }, {
-    key: 'trackSwInstall',
-    value: function trackSwInstall(worker) {
-      var idbController = this;
-      worker.addEventListener('statechange', function () {
-        if (worker.state === 'installed') {
-          idbController.swUpdateReady(worker);
-        }
-      });
-    }
-  }, {
-    key: 'swUpdateReady',
-    value: function swUpdateReady(worker) {
-      // TBD - update the user for changes
-    }
-  }]);
-
-  return IdbController;
-}();
-
-self.idbController = new IdbController();
-self.idbController.openDataBase();
-},{"idb":2}],2:[function(require,module,exports){
 'use strict';
 
 (function() {
@@ -412,11 +289,13 @@ self.idbController.openDataBase();
       var p = promisifyRequestCall(indexedDB, 'open', [name, version]);
       var request = p.request;
 
-      request.onupgradeneeded = function(event) {
-        if (upgradeCallback) {
-          upgradeCallback(new UpgradeDB(request.result, event.oldVersion, request.transaction));
-        }
-      };
+      if (request) {
+        request.onupgradeneeded = function(event) {
+          if (upgradeCallback) {
+            upgradeCallback(new UpgradeDB(request.result, event.oldVersion, request.transaction));
+          }
+        };
+      }
 
       return p.then(function(db) {
         return new DB(db);
@@ -435,5 +314,3 @@ self.idbController.openDataBase();
     self.idb = exp;
   }
 }());
-
-},{}]},{},[1])

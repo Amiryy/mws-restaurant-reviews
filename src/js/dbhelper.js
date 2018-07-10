@@ -1,17 +1,4 @@
-/**
- * Register service worker
- */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('/sw.js').then(function(registration) {
-      // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      // registration failed :(
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}
+
 // Common database helper functions.
 class DBHelper {
   // Database URL.
@@ -25,9 +12,6 @@ class DBHelper {
     const storeName = 'restaurants';
     const url = DBHelper.DATABASE_URL;
     const cachedData = await self.idbController.fetchData(storeName);
-    if(cachedData && cachedData.length > 0) {
-      callback(null, cachedData);
-    }
     fetch(url).then(response => {
       if(response.status === 200) {
         return response.json();
@@ -38,7 +22,11 @@ class DBHelper {
       self.idbController.storeData(data, storeName);
       callback(null, data);
     }).catch(error => {
-      callback(error, null);
+      if(cachedData && cachedData.length > 0) {
+        callback(null, cachedData);
+      } else {
+        callback(error, null);
+      }
     });
   }
   // Fetch a restaurant by its ID.
@@ -143,9 +131,10 @@ class DBHelper {
   }
 
   // Restaurant image URL.
-  static imageUrlForRestaurant(restaurant) {
+  static imageUrlForRestaurant(restaurant, deliverThumbnail = false) {
     const photoId = restaurant.photograph || restaurant.id;
-    return (`./img/${photoId}.jpg`);
+    if(deliverThumbnail) return `./img/thumbnails/${photoId}.jpg`;
+    return `./img/${photoId}.jpg`;
   }
 
   // Map marker for a restaurant.

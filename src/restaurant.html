@@ -5,10 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, shrink-to-fit=no">
 	<meta name="theme-color" content="#000000">
   <!-- Normalize.css for better cross-browser consistency -->
-  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link async rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
-  <link rel="stylesheet" href="css/restaurant.css" type="text/css">
-  <link rel="stylesheet" href="css/main.css" type="text/css">
+  <link rel="stylesheet" href="./css/restaurant.css" type="text/css">
+  <link rel="stylesheet" href="./css/restaurant_responsive.css" type="text/css">
+  <link rel="stylesheet" href="./css/main.css" type="text/css">
   <title>Restaurant Info</title>
 </head>
 
@@ -67,13 +68,11 @@
   <!-- End footer -->
 
   <!-- Beginning scripts -->
-	<script type="application/javascript" charset="utf-8" src="js/lib/bLazy.js"></script>
-	<!-- Database helpers -->
-  <script type="text/javascript" src="js/dbhelper.js"></script>
-  <script type="text/javascript" src="js/transpiled/indexController.js"></script>
-  <!-- Main javascript file -->
-  <script type="text/javascript" src="js/restaurant_info.js"></script>
-  <!-- Google Maps -->
+	<script type="application/javascript" charset="utf-8" src="./lib/idb.js"></script>
+	<script type="application/javascript" charset="utf-8" src="./js/dbhelper.js"></script>
+	<script type="application/javascript" charset="utf-8" src="./js/indexController.js"></script>
+	<script type="application/javascript" charset="utf-8" src="./js/restaurant_info.js"></script>
+	<!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPWQ6c01xHEEDZ9Lp0aBXGbwee5KkCNQg&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
 

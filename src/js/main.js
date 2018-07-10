@@ -12,12 +12,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     selector: '.b-lazy',
     success: lazyLoadSuccessFul
   });
-  setTimeout(function(){
-    bLazy.revalidate();
-  }, 500);
+  setTimeout(() => revalidateBlazy(bLazy), 500);
   fetchNeighborhoods();
   fetchCuisines();
+
 });
+
+function revalidateBlazy(bLazy) {
+  bLazy.revalidate();
+}
 
 function lazyLoadSuccessFul(element) {
   setTimeout(function(){
@@ -161,7 +164,7 @@ createRestaurantHTML = (restaurant) => {
   image.className = 'restaurant-img';
   image.setAttribute('class', 'b-lazy loading');
   image.setAttribute('alt', `image of ${restaurant.name}`);
-  image.setAttribute('data-src', DBHelper.imageUrlForRestaurant(restaurant));
+  image.setAttribute('data-src', DBHelper.imageUrlForRestaurant(restaurant, true));
   imageContainer.append(image);
   li.append(imageContainer);
 

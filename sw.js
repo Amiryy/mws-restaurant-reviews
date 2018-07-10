@@ -7,8 +7,14 @@ const urlsToCache = [
   'js/main.js',
   'js/restaurant_info.js',
   'js/dbhelper.js',
+  'js/indexController.js',
+  'lib/idb.js',
+  'lib/bLazy.js',
   'css/main.css',
+  'css/lazy_load.css',
+  'css/main_responsive.css',
   'css/restaurant.css',
+  'css/restaurant_responsive.css',
   'index.html',
   'restaurant.html'
 ];

@@ -6,9 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, shrink-to-fit=no">
 	<meta name="theme-color" content="#000000">
 	<link async rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-	<link rel="stylesheet" href="css/main.css" media="screen">
-	<link async rel="stylesheet" href="css/main_responsive.css" media="none" onload="if(this.media==='none') this.media='only screen and (max-width: 800px)'">
-	<link async rel="stylesheet" href="css/lazy_load.css" media="none" onload="if(this.media==='none') this.media='screen'">
+	<link rel="stylesheet" href="./css/main.css" media="screen">
+	<link async rel="stylesheet" href="./css/main_responsive.css" media="none" onload="if(this.media==='none') this.media='only screen and (max-width: 800px)'">
+	<link async rel="stylesheet" href="./css/lazy_load.css" media="none" onload="if(this.media==='none') this.media='screen'">
 	<title>Restaurant Reviews</title>
 </head>
 
@@ -49,10 +49,25 @@
 <footer id="footer">
 	Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
 </footer>
-<script type="application/javascript" charset="utf-8" src="js/lib/bLazy.js"></script>
-<script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
-<script type="application/javascript" charset="utf-8" src="js/main.js"></script>
-<script type="application/javascript" charset="utf-8" src="js/transpiled/indexController.js"></script>
+<script>
+  // Register service worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(function(registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+</script>
+<script type="application/javascript" charset="utf-8" src="./lib/bLazy.js"></script>
+<script type="application/javascript" charset="utf-8" src="./lib/idb.js"></script>
+<script type="application/javascript" charset="utf-8" src="./js/dbhelper.js"></script>
+<script type="application/javascript" charset="utf-8" src="./js/indexController.js"></script>
+<script type="application/javascript" charset="utf-8" src="./js/main.js"></script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPWQ6c01xHEEDZ9Lp0aBXGbwee5KkCNQg&libraries=places&callback=initMap"></script>
 </body>
 
