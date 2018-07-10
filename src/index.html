@@ -6,7 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, shrink-to-fit=no">
 	<meta name="theme-color" content="#000000">
 	<link async rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-	<link rel="stylesheet" href="./css/main.css" media="screen">
+	<link rel="stylesheet" href="./css/preload.css" media="screen">
+	<link async rel="stylesheet" href="./css/main.css" media="none" onload="if(this.media==='none') this.media='screen'">
 	<link async rel="stylesheet" href="./css/main_responsive.css" media="none" onload="if(this.media==='none') this.media='only screen and (max-width: 800px)'">
 	<link async rel="stylesheet" href="./css/lazy_load.css" media="none" onload="if(this.media==='none') this.media='screen'">
 	<title>Restaurant Reviews</title>

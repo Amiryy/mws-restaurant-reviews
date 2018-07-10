@@ -92,6 +92,28 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {
+  coverMap();
+  updateRestaurants();
+};
+function coverMap() {
+  const mapContainer = document.getElementById('map-container');
+  const map = document.getElementById('map');
+  const cover = document.createElement('div');
+  const unCoverButton = document.createElement('button');
+  unCoverButton.onclick = uncoverMap;
+  unCoverButton.innerText = 'View Map';
+  unCoverButton.className = 'un-cover-button';
+  mapContainer.className = mapContainer.className + ' covered';
+  map.className = map.className + ' covered';
+  cover.className = 'map-cover';
+  cover.appendChild(unCoverButton);
+  mapContainer.appendChild(cover);
+}
+function uncoverMap() {
+  const mapContainer = document.getElementById('map-container');
+  const map = document.getElementById('map');
+  map.className = map.className.replace('covered', '');
+  mapContainer.className = mapContainer.className.replace('covered', '');
   let loc = {
     lat: 40.722216,
     lng: -73.987501
@@ -101,9 +123,8 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  updateRestaurants();
-};
-
+  addMarkersToMap();
+}
 /**
  * Update page and map for current restaurants.
  */
@@ -150,7 +171,6 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  addMarkersToMap();
 };
 
 /**
