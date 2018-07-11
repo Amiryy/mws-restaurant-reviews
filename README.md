@@ -19,7 +19,7 @@ npm install
  yarn start
  ````
 
-###Main Features
+### Main Features
 **Responsive**  - fits to any screen.
  
 **Progressive** - offline functionality.
