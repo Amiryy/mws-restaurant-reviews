@@ -9,7 +9,11 @@ git clone https://github.com/Amiryy/mws-restaurant-reviews.git
 ````
 ####Install
 ````
-yarn / npm install
+yarn
+````
+or
+````
+npm install
 ````
 ####Run the app...
  ````
@@ -18,10 +22,10 @@ yarn / npm install
 
 Main Features
 -
-**Responsive**  - fits to any screen
+**Responsive**  - fits to any screen.
  
-**Progressive** - Offline functionality
+**Progressive** - offline functionality.
 
-**Performance** - Lazy loading and caching
+**Performance** - lazy loading and caching.
 
-**Accessible** - Easy tab navigation and more accessibility practices
+**Accessible** - easy tab navigation and more accessibility practices.
