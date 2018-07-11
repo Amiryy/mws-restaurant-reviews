@@ -3,11 +3,11 @@ Mobile Web Specialist Certification Course
 #### _Three Stage Course Material Project - Restaurant Reviews_
 
 
-####Clone
+#### Clone
 ````
 git clone https://github.com/Amiryy/mws-restaurant-reviews.git
 ````
-####Install
+#### Install
 ````
 yarn
 ````
@@ -15,7 +15,7 @@ or
 ````
 npm install
 ````
-####Run the app...
+#### Run the app...
  ````
  yarn start
  ````
