@@ -1,6 +1,7 @@
 let restaurants,
   neighborhoods,
-  cuisines;
+  cuisines,
+  bLazy;
  self.map = undefined;
  self.markers = [];
  let lazyLoaded = false;
@@ -8,14 +9,13 @@ let restaurants,
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  const bLazy = new Blazy({
+  bLazy = new Blazy({
     selector: '.b-lazy',
     success: lazyLoadSuccessFul
   });
   setTimeout(() => revalidateBlazy(bLazy), 500);
   fetchNeighborhoods();
   fetchCuisines();
-
 });
 
 function revalidateBlazy(bLazy) {
@@ -137,7 +137,6 @@ updateRestaurants = () => {
 
   const cuisine = cSelect[cIndex].value;
   const neighborhood = nSelect[nIndex].value;
-
   DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
     if (error) { // Got an error!
       console.error(error);
@@ -180,11 +179,17 @@ createRestaurantHTML = (restaurant) => {
   const li = document.createElement('li');
   const image = document.createElement('img');
   const imageContainer = document.createElement('div');
+  const imageURL = DBHelper.imageUrlForRestaurant(restaurant, true);
   imageContainer.setAttribute('class', 'container loading');
   image.className = 'restaurant-img';
-  image.setAttribute('class', 'b-lazy loading');
+  if(lazyLoaded) {
+    image.src = imageURL;
+    image.onload = () => lazyLoadSuccessFul(image)
+  } else {
+    image.setAttribute('class', 'b-lazy loading');
+    image.setAttribute('data-src', imageURL);
+  }
   image.setAttribute('alt', `image of ${restaurant.name}`);
-  image.setAttribute('data-src', DBHelper.imageUrlForRestaurant(restaurant, true));
   imageContainer.append(image);
   li.append(imageContainer);
 
