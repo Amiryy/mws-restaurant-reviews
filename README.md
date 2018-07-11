@@ -1,5 +1,4 @@
-Mobile Web Specialist Certification Course
----
+##Mobile Web Specialist Certification Course
 #### _Three Stage Course Material Project - Restaurant Reviews_
 
 
@@ -20,8 +19,7 @@ npm install
  yarn start
  ````
 
-Main Features
--
+###Main Features
 **Responsive**  - fits to any screen.
  
 **Progressive** - offline functionality.
