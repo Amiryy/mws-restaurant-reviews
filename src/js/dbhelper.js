@@ -8,9 +8,10 @@ class DBHelper {
     return `http://localhost:${port}/restaurants/`;
   }
   // Fetch all restaurants.
-  static async fetchRestaurants(callback) {
+  static async fetchRestaurants(callback, id = null) {
     const storeName = 'restaurants';
-    const url = DBHelper.DATABASE_URL;
+    let url = DBHelper.DATABASE_URL;
+    if (id) url += id;
     const cachedData = await self.idbController.fetchData(storeName);
     fetch(url).then(response => {
       if(response.status === 200) {
@@ -23,7 +24,11 @@ class DBHelper {
       callback(null, data);
     }).catch(error => {
       if(cachedData && cachedData.length > 0) {
-        callback(null, cachedData);
+        let data = cachedData;
+        if(id) {
+          data = cachedData.find(r => Number(r.id) === Number(id));
+        }
+        callback(null, data);
       } else {
         callback(error, null);
       }
@@ -32,18 +37,17 @@ class DBHelper {
   // Fetch a restaurant by its ID.
   static async fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
-    await DBHelper.fetchRestaurants((error, restaurants) => {
+    await DBHelper.fetchRestaurants((error, restaurant) => {
       if (error) {
         callback(error, null);
       } else {
-        const restaurant = restaurants.find(r => Number(r.id) === Number(id));
         if (restaurant) { // Got the restaurant
           callback(null, restaurant);
         } else { // Restaurant does not exist in the database
           callback('Restaurant does not exist', null);
         }
       }
-    });
+    }, id);
   }
 
   // Fetch restaurants by a cuisine type with proper error handling.
