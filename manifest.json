@@ -1,0 +1,8 @@
+{
+  "short_name": "Restaurants",
+  "name": "Restaurant Reviews",
+  "start_url": "/",
+  "background_color": "#f3f3f3",
+  "display": "standalone",
+  "theme_color": "#f3f3f3"
+}

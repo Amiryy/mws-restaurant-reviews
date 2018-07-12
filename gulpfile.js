@@ -15,14 +15,7 @@ var CSS_FILES = 'src/css/**/*.css';
 var DIST_DIR = './dist';
 
 //Simple Setup
-gulp.task('default', [
-  'copy-lib',
-  'scripts-dist', 
-  'copy-sw',
-  'copy-html',
-  'copy-images',
-  'resize-images',
-  'copy-styles'], function() {
+gulp.task('default', ['build-and-serve'], function() {
   gulp.watch(JS_SRC_FILES, ['scripts-dist']);
   gulp.watch(JS_SRC_FILES).on('change', browserSync.reload);
   gulp.watch(CSS_FILES, ['copy-styles']);
@@ -36,10 +29,21 @@ gulp.task('default', [
   });
 });
 
-//transpiling for idb promised library
-
+gulp.task('build-and-serve', [
+  'copy-sw',
+  'copy-manifest',
+  'copy-lib',
+  'scripts-dist',
+  'copy-html',
+  'copy-styles',
+  'resize-images',
+]);
 gulp.task('copy-sw', function() {
   gulp.src('sw.js')
+    .pipe(gulp.dest(DIST_DIR));
+});
+gulp.task('copy-manifest', function() {
+  gulp.src('manifest.json')
     .pipe(gulp.dest(DIST_DIR));
 });
 gulp.task('copy-lib', function() {
@@ -70,20 +74,4 @@ gulp.task('resize-images', function() {
       imageMin.jpegtran({progressive: true}),
     ]))
     .pipe(gulp.dest(DIST_DIR + '/img/thumbnails'))
-});
-gulp.task('copy-images', function() {
-  gulp.src('src/img/*')
-    .pipe(imageMin([
-      imageMin.jpegtran({progressive: true}),
-    ]))
-    .pipe(gulp.dest(DIST_DIR + '/img'))
-});
-
-gulp.task('styles', function() {
-  gulp.src('css/**/*.scss')
-    .pipe(autoprefixer({
-      browsers: ['last 2 versions']
-    }))
-    .pipe(gulp.dest(DIST_DIR + '/css'))
-    .pipe(browserSync.stream());
 });
