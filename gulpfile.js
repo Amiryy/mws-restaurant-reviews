@@ -1,13 +1,12 @@
 /*eslint-env node */
 var gulp = require('gulp');
-var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync').create();
 var uglify = require('gulp-uglify-es').default;
 var babel = require('gulp-babel');
 var sourceMaps = require('gulp-sourcemaps');
 var imageMin = require('gulp-imagemin');
 var resize = require('gulp-image-resize');
-
+var compression = require('compression');
 // Constants
 var JS_SRC_FILES = 'src/js/**/*.js';
 var JS_LIB_FILES = 'src/lib/**/*.js';
@@ -25,19 +24,28 @@ gulp.task('default', ['build-and-serve'], function() {
   gulp.watch('./src/restaurant.html', ['copy-html']);
   gulp.watch('./src/restaurant.html').on('change', browserSync.reload);
   browserSync.init({
-    server: DIST_DIR
+    server: {
+      baseDir: DIST_DIR,
+      middleware: compression()
+    }
   });
 });
 
 gulp.task('build-and-serve', [
+  'copy-favicon',
   'copy-sw',
   'copy-manifest',
   'copy-lib',
   'scripts-dist',
   'copy-html',
   'copy-styles',
-  'resize-images',
+  'resize-jpg',
+  'copy-png'
 ]);
+gulp.task('copy-favicon', function() {
+  gulp.src('src/favicon.png')
+    .pipe(gulp.dest(DIST_DIR));
+});
 gulp.task('copy-sw', function() {
   gulp.src('sw.js')
     .pipe(gulp.dest(DIST_DIR));
@@ -67,8 +75,15 @@ gulp.task('copy-styles', function() {
   gulp.src(CSS_FILES)
     .pipe(gulp.dest(DIST_DIR + '/css'));
 });
-gulp.task('resize-images', function() {
-  gulp.src('src/img/*')
+gulp.task('copy-png', function() {
+  gulp.src('src/img/*.png')
+    .pipe(imageMin([
+      imageMin.optipng({progressive: true}),
+    ]))
+    .pipe(gulp.dest(DIST_DIR + '/img'))
+});
+gulp.task('resize-jpg', function() {
+  gulp.src('src/img/*.jpg')
     .pipe(resize({percentage : 50}))
     .pipe(imageMin([
       imageMin.jpegtran({progressive: true}),
