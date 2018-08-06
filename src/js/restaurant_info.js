@@ -67,6 +67,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
+  createFormToggle();
   fillReviewsHTML();
 };
 
@@ -155,13 +156,34 @@ createReviewHTML = (review) => {
 
   return li;
 };
-
+createFormToggle = () => {
+  const header = document.getElementById('form-header');
+  const toggleButton = document.createElement('button');
+  const dropdownForm = document.getElementById('dropdown-form');
+  dropdownForm.setAttribute('class', '');
+  toggleButton.setAttribute('id', 'toggle-arrow');
+  toggleButton.innerHTML = '&#x25BC';
+  header.appendChild(toggleButton);
+  header.addEventListener('click', toggleForm)
+};
+toggleForm = () => {
+  const toggleButton = document.getElementById('toggle-arrow');
+  const dropdownForm = document.getElementById('dropdown-form');
+  const formClass = dropdownForm.getAttribute('class');
+  const formVisibility = formClass === '' || formClass === 'disappear'  ? 'appear' : 'disappear';
+  const toggleClass = toggleButton.getAttribute('class');
+  const toggleButtonRotation = toggleClass === 'rotated' ? '' : 'rotated';
+  setTimeout(() => {
+    dropdownForm.style.height = formVisibility === 'disappear' ? 0 : 'initial';
+  }, 75);
+  toggleButton.setAttribute('class', toggleButtonRotation);
+  dropdownForm.setAttribute('class', formVisibility);
+};
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
 fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
-
   const li = document.getElementById('restaurant-name-breadcrumb');
   li.innerHTML = restaurant.name;
   breadcrumb.appendChild(li);

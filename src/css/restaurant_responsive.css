@@ -15,6 +15,16 @@
     padding: 15px 20px 40px;
   }
 
+  #review-form {
+    width: 100%;
+  }
+  #form-header:hover {
+    background-color: transparent;
+    color: inherit;
+  }
+  #review-form form button:hover {
+    background-color: #4d5366;
+  }
   #restaurant-container {
     padding: 140px 0 10px;
   }
