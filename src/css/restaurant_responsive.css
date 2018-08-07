@@ -14,7 +14,9 @@
     width: 100%;
     padding: 15px 20px 40px;
   }
-
+  #reviews-container {
+    padding-bottom: 80px;
+  }
   #review-form {
     width: 100%;
   }

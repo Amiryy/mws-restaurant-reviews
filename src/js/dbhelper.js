@@ -34,6 +34,9 @@ class DBHelper {
       }
     });
   }
+  static async fetchReviews(callback, id = null) {
+
+  }
   // Fetch a restaurant by its ID.
   static async fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.

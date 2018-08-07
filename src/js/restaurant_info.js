@@ -1,5 +1,5 @@
 let restaurant, map;
-
+let isReviewFormOpen;
 /**
  * Initialize Google map, called from HTML.
  */
@@ -160,24 +160,23 @@ createFormToggle = () => {
   const header = document.getElementById('form-header');
   const toggleButton = document.createElement('button');
   const dropdownForm = document.getElementById('dropdown-form');
-  dropdownForm.setAttribute('class', '');
+  dropdownForm.style.display = 'flex';
+  const formRealHeight = dropdownForm.getBoundingClientRect().height;
+  dropdownForm.style.height = 0;
+  const animator = new Animator(dropdownForm);
+  isReviewFormOpen = false;
   toggleButton.setAttribute('id', 'toggle-arrow');
   toggleButton.innerHTML = '&#x25BC';
   header.appendChild(toggleButton);
-  header.addEventListener('click', toggleForm)
+  header.addEventListener('click', () => toggleForm(formRealHeight + 40, animator))
 };
-toggleForm = () => {
+toggleForm = (formRealHeight = 500, animator) => {
   const toggleButton = document.getElementById('toggle-arrow');
-  const dropdownForm = document.getElementById('dropdown-form');
-  const formClass = dropdownForm.getAttribute('class');
-  const formVisibility = formClass === '' || formClass === 'disappear'  ? 'appear' : 'disappear';
   const toggleClass = toggleButton.getAttribute('class');
   const toggleButtonRotation = toggleClass === 'rotated' ? '' : 'rotated';
-  setTimeout(() => {
-    dropdownForm.style.height = formVisibility === 'disappear' ? 0 : 'initial';
-  }, 75);
+  animator.toggleDropdown(0, formRealHeight, 100, isReviewFormOpen);
   toggleButton.setAttribute('class', toggleButtonRotation);
-  dropdownForm.setAttribute('class', formVisibility);
+  isReviewFormOpen = !isReviewFormOpen;
 };
 /**
  * Add restaurant name to the breadcrumb navigation menu
