@@ -8,13 +8,15 @@ window.initMap = () => {
     if (error) { // Got an error!
       console.error(error);
     } else {
-      self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 16,
-        center: restaurant.latlng,
-        scrollwheel: false
-      });
+      const mapContainer = document.getElementById('map-container');
+      const map = document.getElementById('map');
+      const mapCover = new MapCover(
+        mapContainer,
+        map,
+        () => DBHelper.mapMarkerForRestaurant(self.restaurant, self.map)
+      );
+      mapCover.coverMap();
       fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
     }
   });
 };

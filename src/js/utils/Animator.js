@@ -3,7 +3,6 @@ class Animator {
     this.element = element;
   }
   toggleDropdown(closedHeight, openedHeight, duration, isOpen) {
-    console.log(closedHeight, openedHeight, duration, isOpen, this.element);
     let start;
     this.element.style.padding = isOpen ? 0 : '40px';
     const animate = timestamp => {

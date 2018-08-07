@@ -18,6 +18,8 @@
   nav h1 a{
     font-size: 0.8rem;
   }
+}
+@media only screen and (max-width: 580px) {
   #restaurants-list li {
     width: 90%;
   }
