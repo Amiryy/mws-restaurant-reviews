@@ -1,10 +1,10 @@
-let restaurant, map;
+let restaurant, map, reviews;
 let isReviewFormOpen;
 /**
  * Initialize Google map, called from HTML.
  */
 window.initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
+  fetchRestaurantFromURL((error) => {
     if (error) { // Got an error!
       console.error(error);
     } else {
@@ -24,24 +24,34 @@ window.initMap = () => {
 /**
  * Get current restaurant from page URL.
  */
-fetchRestaurantFromURL = (callback) => {
-  if (self.restaurant) { // restaurant already fetched!
+fetchRestaurantFromURL = async (callback) => {
+  console.log(self.restaurant, self.reviews);
+  if (self.restaurant && self.reviews) { // restaurant already fetched!
     callback(null, self.restaurant);
     return;
   }
   const id = getParameterByName('id');
   if (!id) { // no id found in URL
-    error = 'No restaurant id in URL';
+    const error = 'No restaurant id in URL';
     callback(error, null);
   } else {
-    DBHelper.fetchRestaurantById(id, (error, restaurant) => {
+    await DBHelper.fetchRestaurantById(id, (error, restaurant) => {
       self.restaurant = restaurant;
       if (!restaurant) {
         console.error(error);
         return;
       }
       fillRestaurantHTML();
-      callback(null, restaurant)
+      callback(null)
+    });
+    await DBHelper.fetchReviews(id, (error, reviews) => {
+      self.reviews = reviews;
+      if (!reviews) {
+        console.error(error);
+        return;
+      }
+      fillReviewsHTML();
+      callback(null)
     });
   }
 };
@@ -68,9 +78,6 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   if (restaurant.operating_hours) {
     fillRestaurantHoursHTML();
   }
-  // fill reviews
-  createFormToggle();
-  fillReviewsHTML();
 };
 
 /**
@@ -102,7 +109,8 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (reviews = self.reviews) => {
+  createFormToggle();
   const container = document.getElementById('reviews-container');
   container.innerHTML = '';
   const title = document.createElement('h3');
@@ -133,7 +141,8 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = `at ${review.date}`;
+  const dateValue = formatDate(new Date(review.createdAt));
+  date.innerHTML = `on ${dateValue}`;
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -204,4 +213,13 @@ getParameterByName = (name, url) => {
   if (!results[2])
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+};
+
+formatDate = (date) => {
+  const FULL_YEAR = date.getUTCFullYear();
+  const MONTH = ("0" + (date.getUTCMonth() + 1)).slice(-2);
+  const DAY = ("0" + date.getUTCDate()).slice(-2);
+  const HOURS = ("0" + date.getUTCHours()).slice(-2);
+  const MINUTES = ("0" + date.getUTCMinutes()).slice(-2);
+  return `${MONTH}/${DAY}/${FULL_YEAR} at ${HOURS}:${MINUTES}`;
 };

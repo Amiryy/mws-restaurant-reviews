@@ -5,12 +5,12 @@ class DBHelper {
   // Change this to restaurants.json file location on your server.
   static get DATABASE_URL() {
     const port = 1337; // Change this to your server port
-    return `http://localhost:${port}/restaurants/`;
+    return `http://localhost:${port}`;
   }
   // Fetch all restaurants.
   static async fetchRestaurants(callback, id = null) {
     const storeName = 'restaurants';
-    let url = DBHelper.DATABASE_URL;
+    let url = DBHelper.DATABASE_URL + '/restaurants/';
     if (id) url += id;
     const cachedData = await self.idbController.fetchData(storeName);
     fetch(url).then(response => {
@@ -34,8 +34,31 @@ class DBHelper {
       }
     });
   }
-  static async fetchReviews(callback, id = null) {
-
+  static async fetchReviews(id = null, callback) {
+    const storeName = 'reviews';
+    let url = DBHelper.DATABASE_URL + '/reviews/';
+    if (id) url += `?restaurant_id=${id}`;
+    const cachedData = await self.idbController.fetchData(storeName);
+    fetch(url).then(response => {
+      if(response.status === 200) {
+        return response.json();
+      } else {
+        throw Error(response.statusText);
+      }
+    }).then(data => {
+      self.idbController.storeData(data, storeName);
+      callback(null, data);
+    }).catch(error => {
+      if(cachedData && cachedData.length > 0) {
+        let data = cachedData;
+        if(id) {
+          data = cachedData.find(r => Number(r.id) === Number(id));
+        }
+        callback(null, data);
+      } else {
+        callback(error, null);
+      }
+    });
   }
   // Fetch a restaurant by its ID.
   static async fetchRestaurantById(id, callback) {

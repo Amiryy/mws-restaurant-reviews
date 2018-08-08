@@ -11,13 +11,16 @@ class IdbController {
       return Promise.resolve();
     }
 
-    this.dbPromise = idb.open('restaurant-reviews-app', 1, function(upgradeDb) {
+    this.dbPromise = idb.open('restaurant-reviews-app', 2, function(upgradeDb) {
       switch(upgradeDb.oldVersion) {
-        case 0: {
-          upgradeDb.createObjectStore('restaurants', {
-            keyPath: 'id'
-          });
-        }
+      case 0:
+        upgradeDb.createObjectStore('restaurants', {
+          keyPath: 'id'
+        });
+      case 1:
+        upgradeDb.createObjectStore('reviews', {
+          keyPath: 'id'
+        });
       }
     });
     return this.dbPromise;
@@ -27,8 +30,8 @@ class IdbController {
       if(!db) return;
       const tx = db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
-      data.forEach(restaurant => {
-        store.put(restaurant);
+      data.forEach(item => {
+        store.put(item);
       })
     });
   }
