@@ -30,3 +30,8 @@
   border-top-color: #005C7D;
   animation: spinner 0.6s linear infinite;
 }
+@media only screen and (max-width: 800px) {
+  .container.loading {
+    height: 244px;
+  }
+}

@@ -10,12 +10,14 @@
   .favorites-toggle {
     padding: 0 6px;
   }
-  .favorites-toggle * {
+  #favorites-toggle-heart {
+    margin: 0;
+  }
+  .favorites-toggle label {
     font-size: 0.7rem;
   }
   #restaurants-list li {
     padding: 0 10px 25px;
-    margin: 0;
   }
   nav {
     padding: 0;

@@ -191,7 +191,8 @@ toggleForm = (formRealHeight = 500, animator) => {
   const toggleClass = toggleButton.getAttribute('class');
   const dropdownForm = document.getElementById('dropdown-form');
   const toggleButtonRotation = toggleClass === 'rotated' ? '' : 'rotated';
-  dropdownForm.style.padding = isReviewFormOpen ? 0 : '40px';
+  dropdownForm.style.padding = isReviewFormOpen ? '0' : '40px';
+  dropdownForm.style.opacity = isReviewFormOpen ? '0' : '1';
   animator.toggleDropdown(0, formRealHeight, 100, isReviewFormOpen);
   toggleButton.setAttribute('class', toggleButtonRotation);
   isReviewFormOpen = !isReviewFormOpen;
