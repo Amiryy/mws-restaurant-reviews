@@ -83,34 +83,24 @@
 	#map-container.covered .map-cover .un-cover-button:hover {
 		background: #005C7D;
 	}
-	/* ====================== Restaurant Filtering ====================== */
-	.filter-options {
-		display: flex;
-		justify-content: center;
-		width: 100%;
-		height: 50px;
-		background-color: #005C7D;
-		align-items: center;
+	.heart-checkbox {
+		font-size: 1.5rem;
+		background-color: transparent;
+		border: none;
+		color: #005C7D;
 	}
-	.filter-selectors {
+	.heart-checkbox[aria-checked="true"] {
+		color: red !important;
+	}
+	.restaurant-card-header {
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
-		flex: 0 1 auto;
+		margin-bottom: 20px;
 	}
-	
-	/* ====================== Restaurant Listing ====================== */
-	#restaurants-list {
-		background-color: #f3f3f3;
-		list-style: outside none none;
-		margin: 0 auto;
-		padding: 30px 15px 60px;
-		text-align: center;
-		display: flex;
-		justify-content: center;
-		flex-flow: wrap;
-		width: 1200px;
-		max-width: 95%;
+	.restaurant-card-header .heart-checkbox{
+		cursor: pointer;
+		padding: 10px;
 	}
 </style>
 <head>
@@ -147,7 +137,12 @@
   <main id="maincontent">
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
-      <h2 tabindex="3" id="restaurant-name"></h2>
+			<div class="restaurant-card-header">
+				<h2 tabindex="3" id="restaurant-name"></h2>
+				<button id="favorite-toggle-heart"
+								class="heart-checkbox"
+								role="checkbox">♥</button>
+			</div>
       <img tabindex="3" id="restaurant-img">
       <p tabindex="3" id="restaurant-cuisine"></p>
       <p tabindex="3" id="restaurant-address"></p>

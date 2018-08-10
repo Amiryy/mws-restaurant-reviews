@@ -61,7 +61,13 @@ fetchRestaurantFromURL = async (callback) => {
 fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
-
+  const heart = document.getElementById('favorite-toggle-heart');
+  heart.setAttribute('aria-checked', '' + restaurant.is_favorite);
+  heart.addEventListener('click', async (e) => {
+    const isChecked = e.target.getAttribute('aria-checked') === 'true';
+    e.target.setAttribute('aria-checked', "" + !isChecked);
+    await DBHelper.setFavoriteRestaurant(restaurant.id, !isChecked);
+  });
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
