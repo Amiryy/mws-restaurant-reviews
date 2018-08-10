@@ -172,10 +172,29 @@ createReviewHTML = (review) => {
 
   return li;
 };
+setRestaurantRating = () => {
+  const starsContainer = document.getElementById('stars-container');
+  const ratingSelector = document.getElementById('rating-select');
+  const currentUserRating = Number(ratingSelector.value);
+  const MAX_RATING = 5;
+  starsContainer.innerHTML = '';
+  for(let i = 1; i <= MAX_RATING; i++) {
+    const star = document.createElement('span');
+    if(i <= currentUserRating) {
+      star.innerHTML = '&#9733';
+      star.style.color = '#FFD200';
+      star.style.textShadow = '1px 1px #7a7a7a';
+    } else {
+      star.innerHTML = '&#9734';
+    }
+    starsContainer.appendChild(star);
+  }
+};
 createFormToggle = () => {
   const header = document.getElementById('form-header');
   const toggleButton = document.createElement('button');
   const dropdownForm = document.getElementById('dropdown-form');
+  setRestaurantRating();
   dropdownForm.style.display = 'flex';
   const formRealHeight = dropdownForm.getBoundingClientRect().height;
   dropdownForm.style.height = '0';
