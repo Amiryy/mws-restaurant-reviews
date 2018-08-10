@@ -104,8 +104,7 @@ nav h1 a {
 }
 .restaurant-card-header .heart-checkbox{
   cursor: pointer;
-  padding: 20px;
-  color: #005C7D;
+  padding: 10px;
 }
 #restaurants-list li h1 {
   color: #252831;

@@ -95,8 +95,8 @@
 		justify-content: center;
 	}
 	#dropdown-arrow {
-		 display: none;
-	 }
+		display: none;
+	}
 	#dropdown-arrow.rotated {
 		transform: rotate(180deg);
 	}
@@ -132,9 +132,8 @@
 		cursor: pointer;
 	}
 	#favorites-toggle-heart {
-		 margin-left: 10px;
-		 font-size: 1.5rem;
-	 }
+		margin-left: 10px;
+	}
 	/* ====================== Restaurant Listing ====================== */
 	#restaurants-list {
 		background-color: #f3f3f3;
@@ -150,6 +149,9 @@
 	}
 	.heart-checkbox {
 		font-size: 1.5rem;
+		background-color: transparent;
+		border: none;
+		color: #005C7D;
 	}
 	.heart-checkbox[aria-checked="true"] {
 		color: red !important;
@@ -196,20 +198,20 @@
 				<select id="neighborhoods-select"
 								name="neighborhoods"
 								onchange="updateRestaurants()">
-				<option value="all">All Neighborhoods</option>
+					<option value="all">All Neighborhoods</option>
 				</select>
 				<label class='screen-reader-content'
 							 for="cuisines-select">filter by cuisines</label>
 				<select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
 					<option value="all">All Cuisines</option>
 				</select>
-				<div class="favorites-toggle"
-						 onclick="toggleFavorites()">
+				<div class="favorites-toggle">
 					<label for="favorites-toggle-heart">Your Favorites</label>
-					<div id="favorites-toggle-heart"
-							 class="heart-checkbox"
-							 role="checkbox"
-							 aria-checked="false">♥</div>
+					<button onclick="toggleFavorites()"
+									id="favorites-toggle-heart"
+									class="heart-checkbox"
+									role="checkbox"
+									aria-checked="false">♥</button>
 				</div>
 			</div>
 		</div>

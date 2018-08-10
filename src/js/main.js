@@ -135,9 +135,9 @@ window.initMap = () => {
 };
 toggleFavorites = () => {
   const fToggle = document.getElementById('favorites-toggle-heart');
-  const isFavsChecked = fToggle.getAttribute('aria-checked') === 'true';
-  fToggle.setAttribute('aria-checked', "" + !isFavsChecked);
-  updateRestaurants(!isFavsChecked);
+  const isChecked = fToggle.getAttribute('aria-checked') === 'true';
+  fToggle.setAttribute('aria-checked', "" + !isChecked);
+  updateRestaurants(!isChecked);
 };
 /**
  * Update page and map for current restaurants.
@@ -213,11 +213,12 @@ createRestaurantHTML = (restaurant) => {
   name.innerHTML = restaurant.name;
   headerContainer.append(name);
 
-  const heart = document.createElement('div');
+  const heart = document.createElement('button');
   heart.innerHTML = '♥';
   heart.setAttribute('class', 'heart-checkbox');
   heart.setAttribute('role', 'checkbox');
   heart.setAttribute('aria-checked', '' + restaurant.is_favorite);
+  heart.setAttribute('aria-label', `${restaurant.is_favorite ? 'unset' : 'set'} ${restaurant.name} as favorite`);
   heart.addEventListener('click', async e => {
     const isChecked = e.target.getAttribute('aria-checked') === 'true';
     e.target.setAttribute('aria-checked', "" + !isChecked);

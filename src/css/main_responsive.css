@@ -13,6 +13,10 @@
   .favorites-toggle * {
     font-size: 0.7rem;
   }
+  #restaurants-list li {
+    padding: 0 10px 25px;
+    margin: 0;
+  }
   nav {
     padding: 0;
     height: auto;
@@ -26,7 +30,7 @@
 }
 @media only screen and (max-width: 580px) {
   #restaurants-list li {
-    width: 90%;
+    width: 100%;
   }
   #filters-dropdown-toggle {
     width: 100%;
