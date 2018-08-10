@@ -154,6 +154,7 @@ updateRestaurants = (isFavsChecked = false) => {
       console.error(error);
     } else {
       resetRestaurants(restaurants);
+      addMarkersToMap();
       fillRestaurantsHTML();
     }
   })
