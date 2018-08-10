@@ -98,19 +98,23 @@ window.initMap = () => {
   mapCover.coverMap();
   updateRestaurants();
 };
+toggleFavorites = () => {
+  const fToggle = document.getElementById('favorites-toggle-heart');
+  const isFavsChecked = fToggle.getAttribute('aria-checked') === 'true';
+  fToggle.setAttribute('aria-checked', "" + !isFavsChecked);
+  updateRestaurants(!isFavsChecked);
+};
 /**
  * Update page and map for current restaurants.
  */
-updateRestaurants = () => {
+updateRestaurants = (isFavsChecked = false) => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
-
   const cIndex = cSelect.selectedIndex;
   const nIndex = nSelect.selectedIndex;
-
   const cuisine = cSelect[cIndex].value;
   const neighborhood = nSelect[nIndex].value;
-  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
+  DBHelper.fetchRestaurantByFilters(cuisine, neighborhood, isFavsChecked, (error, restaurants) => {
     if (error) { // Got an error!
       console.error(error);
     } else {

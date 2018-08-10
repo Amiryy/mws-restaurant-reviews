@@ -8,10 +8,11 @@ class DBHelper {
     return `http://localhost:${port}`;
   }
   // Fetch all restaurants.
-  static async fetchRestaurants(callback, id = null) {
+  static async fetchRestaurants(callback, id = null, isFavorite = null) {
     const storeName = 'restaurants';
     let url = DBHelper.DATABASE_URL + '/restaurants/';
     if (id) url += id;
+    if(isFavorite) url += "?is_favorite=true";
     const cachedData = await self.idbController.fetchData(storeName);
     fetch(url).then(response => {
       if(response.status === 200) {
@@ -77,7 +78,7 @@ class DBHelper {
   }
 
   // Fetch restaurants by a cuisine and a neighborhood with proper error handling.
-  static async fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
+  static async fetchRestaurantByFilters(cuisine, neighborhood, isFavorite, callback) {
     // Fetch all restaurants
     await DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -92,7 +93,7 @@ class DBHelper {
         }
         callback(null, results);
       }
-    });
+    }, null, isFavorite);
   }
 
   // Fetch all neighborhoods with proper error handling.
