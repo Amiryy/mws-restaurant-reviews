@@ -135,9 +135,6 @@
 		 margin-left: 10px;
 		 font-size: 1.5rem;
 	 }
-	#favorites-toggle-heart[aria-checked="true"] {
-		color: red;
-	}
 	/* ====================== Restaurant Listing ====================== */
 	#restaurants-list {
 		background-color: #f3f3f3;
@@ -150,6 +147,12 @@
 		flex-flow: wrap;
 		width: 1200px;
 		max-width: 95%;
+	}
+	.heart-checkbox {
+		font-size: 1.5rem;
+	}
+	.heart-checkbox[aria-checked="true"] {
+		color: red !important;
 	}
 </style>
 <head>

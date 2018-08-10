@@ -205,10 +205,24 @@ createRestaurantHTML = (restaurant) => {
   image.setAttribute('alt', `image of ${restaurant.name}`);
   imageContainer.append(image);
   li.append(imageContainer);
+  const headerContainer = document.createElement('div');
+  headerContainer.setAttribute('class', 'restaurant-card-header');
+  li.append(headerContainer);
 
   const name = document.createElement('h1');
   name.innerHTML = restaurant.name;
-  li.append(name);
+  headerContainer.append(name);
+
+  const heart = document.createElement('div');
+  heart.innerHTML = '♥';
+  heart.setAttribute('class', 'heart-checkbox');
+  heart.setAttribute('role', 'checkbox');
+  heart.setAttribute('aria-checked', '' + restaurant.is_favorite);
+  heart.addEventListener('click', e => {
+    const isChecked = e.target.getAttribute('aria-checked') === 'true';
+    e.target.setAttribute('aria-checked', "" + !isChecked);
+  });
+  headerContainer.append(heart);
 
   const neighborhood = document.createElement('p');
   neighborhood.innerHTML = restaurant.neighborhood;
