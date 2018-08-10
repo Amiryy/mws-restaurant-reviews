@@ -218,9 +218,10 @@ createRestaurantHTML = (restaurant) => {
   heart.setAttribute('class', 'heart-checkbox');
   heart.setAttribute('role', 'checkbox');
   heart.setAttribute('aria-checked', '' + restaurant.is_favorite);
-  heart.addEventListener('click', e => {
+  heart.addEventListener('click', async e => {
     const isChecked = e.target.getAttribute('aria-checked') === 'true';
     e.target.setAttribute('aria-checked', "" + !isChecked);
+    await DBHelper.setFavoriteRestaurant(restaurant.id, !isChecked);
   });
   headerContainer.append(heart);
 

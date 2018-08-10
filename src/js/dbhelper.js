@@ -61,6 +61,26 @@ class DBHelper {
       }
     });
   }
+  static async setFavoriteRestaurant (id, isFavorite) {
+    const storeName = 'restaurants';
+    const url = DBHelper.DATABASE_URL + '/restaurants/' + id + '/?is_favorite=' + isFavorite;
+    fetch(url, {
+      method: 'put',
+      headers: new Headers({
+        'Accept': 'application/JSON'
+      }),
+    }).then(response => {
+      if(response.status === 200) {
+        return response.json();
+      } else {
+        throw Error(response.statusText);
+      }
+    }).then(data => {
+      self.idbController.storeData(data, storeName);
+    }).catch(error => {
+      console.error(error);
+    });
+  }
   // Fetch a restaurant by its ID.
   static async fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
