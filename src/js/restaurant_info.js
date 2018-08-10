@@ -172,7 +172,7 @@ createFormToggle = () => {
   const dropdownForm = document.getElementById('dropdown-form');
   dropdownForm.style.display = 'flex';
   const formRealHeight = dropdownForm.getBoundingClientRect().height;
-  dropdownForm.style.height = 0;
+  dropdownForm.style.height = '0';
   const animator = new Animator(dropdownForm);
   isReviewFormOpen = false;
   toggleButton.setAttribute('id', 'toggle-arrow');
@@ -183,7 +183,9 @@ createFormToggle = () => {
 toggleForm = (formRealHeight = 500, animator) => {
   const toggleButton = document.getElementById('toggle-arrow');
   const toggleClass = toggleButton.getAttribute('class');
+  const dropdownForm = document.getElementById('dropdown-form');
   const toggleButtonRotation = toggleClass === 'rotated' ? '' : 'rotated';
+  dropdownForm.style.padding = isReviewFormOpen ? 0 : '40px';
   animator.toggleDropdown(0, formRealHeight, 100, isReviewFormOpen);
   toggleButton.setAttribute('class', toggleButtonRotation);
   isReviewFormOpen = !isReviewFormOpen;

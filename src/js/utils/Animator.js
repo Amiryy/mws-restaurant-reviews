@@ -4,7 +4,6 @@ class Animator {
   }
   toggleDropdown(closedHeight, openedHeight, duration, isOpen) {
     let start;
-    this.element.style.padding = isOpen ? 0 : '40px';
     const animate = timestamp => {
       if(!start) start = timestamp;
       const progress = timestamp - start;

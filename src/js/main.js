@@ -5,6 +5,7 @@ let restaurants,
  self.map = undefined;
  self.markers = [];
  let lazyLoaded = false;
+ let isFiltersOpen = false;
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -14,6 +15,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     success: lazyLoadSuccessFul
   });
   setTimeout(() => revalidateBlazy(bLazy), 500);
+  checkViewportAdaptations();
   fetchNeighborhoods();
   fetchCuisines();
 });
@@ -30,6 +32,39 @@ function lazyLoadSuccessFul(element) {
     element.className = element.className.replace('loading', '');
   }, 200);
 }
+
+checkViewportAdaptations = () => {
+  if(!window.onresize) {
+    window.onresize = checkViewportAdaptations;
+  }
+  const filterDropdown = document.getElementById('filter-selectors');
+  if(window.innerWidth <= 580) {
+    setupFiltersDropdown(filterDropdown);
+  } else {
+    filterDropdown.style.height = '55px';
+  }
+};
+setupFiltersDropdown = () => {
+  const element = document.getElementById('filter-selectors');
+  const toggleArrow = document.getElementById('dropdown-arrow');
+  const toggleButton = document.getElementById('filters-dropdown-toggle');
+  const animator = new Animator(element);
+  const filtersRealHeight = 165;
+  toggleArrow.setAttribute('class', '');
+  element.style.height = '0';
+  toggleButton.onclick = null;
+  toggleButton.onclick = () => {
+    toggleFiltersDropdown(filtersRealHeight, animator);
+  }
+};
+toggleFiltersDropdown = (filtersRealHeight, animator) => {
+  const toggleArrow = document.getElementById('dropdown-arrow');
+  const arrowClass = toggleArrow.getAttribute('class');
+  const toggleArrowRotation = arrowClass === 'rotated' ? '' : 'rotated';
+  animator.toggleDropdown(0, filtersRealHeight, 100, isFiltersOpen);
+  toggleArrow.setAttribute('class', toggleArrowRotation);
+  isFiltersOpen = !isFiltersOpen;
+};
 /**
  * Fetch all neighborhoods and set their HTML.
  */
