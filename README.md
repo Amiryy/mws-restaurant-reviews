@@ -20,10 +20,10 @@ npm install
  ````
 
 ### Main Features
-**Responsive**  - fits to any screen.
+**Responsive**  - fits to any viewport.
  
 **Progressive** - offline functionality.
 
 **Performance** - lazy loading and caching.
 
-**Accessible** - easy tab navigation and more accessibility practices.
+**Accessible** - easy keyboard navigation and more accessibility practices.
