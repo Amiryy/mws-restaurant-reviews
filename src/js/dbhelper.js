@@ -61,6 +61,30 @@ class DBHelper {
       }
     });
   }
+  static async postReview (restaurant_id, {name, rating, comments}, callback) {
+    const storeName = 'reviews';
+    const url = DBHelper.DATABASE_URL + '/reviews/';
+    fetch(url, {
+      method: 'post',
+      headers: new Headers({
+        'Accept': 'application/JSON',
+        'Content-Type': 'application/JSON'
+      }),
+      body: JSON.stringify({ restaurant_id, name, rating, comments })
+    }).then(response => {
+      if(response.status === 200) {
+        return response.json();
+      } else {
+        throw Error(response.statusText);
+      }
+    }).then(data => {
+      self.idbController.storeData(data, storeName);
+      callback(null, data);
+    }).catch(error => {
+      console.error(error);
+      callback(error, null);
+    });
+  }
   static async setFavoriteRestaurant (id, isFavorite) {
     const storeName = 'restaurants';
     const url = DBHelper.DATABASE_URL + '/restaurants/' + id + '/?is_favorite=' + isFavorite;

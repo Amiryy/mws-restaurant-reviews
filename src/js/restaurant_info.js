@@ -3,8 +3,8 @@ let isReviewFormOpen;
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
-  fetchRestaurantFromURL((error) => {
+window.initMap = async () => {
+  await fetchRestaurantFromURL((error) => {
     if (error) { // Got an error!
       console.error(error);
     } else {
@@ -34,27 +34,33 @@ fetchRestaurantFromURL = async (callback) => {
     const error = 'No restaurant id in URL';
     callback(error, null);
   } else {
-    await DBHelper.fetchRestaurantById(id, (error, restaurant) => {
-      self.restaurant = restaurant;
-      if (!restaurant) {
-        console.error(error);
-        return;
-      }
-      fillRestaurantHTML();
-      callback(null)
-    });
-    await DBHelper.fetchReviews(id, (error, reviews) => {
-      self.reviews = reviews;
-      if (!reviews) {
-        console.error(error);
-        return;
-      }
-      fillReviewsHTML();
-      callback(null)
-    });
+    await updateRestaurant(id, callback);
+    await updateReviews(id, callback);
+    createFormToggle();
   }
 };
-
+updateRestaurant = async (id, callback) => {
+  await DBHelper.fetchRestaurantById(id, (error, restaurant) => {
+    self.restaurant = restaurant;
+    if (!restaurant) {
+      console.error(error);
+      return;
+    }
+    fillRestaurantHTML();
+    callback(null)
+  });
+};
+updateReviews = async (id, callback = () => null) => {
+  await DBHelper.fetchReviews(id, (error, reviews) => {
+    self.reviews = reviews;
+    if (!reviews) {
+      console.error(error);
+      return;
+    }
+    fillReviewsHTML();
+    callback(null)
+  });
+};
 /**
  * Create restaurant HTML and add it to the webpage
  */
@@ -115,7 +121,6 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  * Create all reviews HTML and add them to the webpage.
  */
 fillReviewsHTML = (reviews = self.reviews) => {
-  createFormToggle();
   const container = document.getElementById('reviews-container');
   container.innerHTML = '';
   const title = document.createElement('h3');
@@ -130,7 +135,7 @@ fillReviewsHTML = (reviews = self.reviews) => {
   }
   const ul = document.createElement('ul');
   ul.setAttribute('id', 'reviews-list');
-  reviews.forEach(review => {
+  reviews.reverse().forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
   container.appendChild(ul);
@@ -151,7 +156,7 @@ createReviewHTML = (review) => {
   li.appendChild(date);
 
   const rating = document.createElement('p');
-  for (let i = 1; i < 6; i++) {
+  for (let i = 1; i <= 5; i++) {
     let star = document.createElement('span');
     if(i <= review.rating){
       //Convert rating to stars
@@ -171,6 +176,23 @@ createReviewHTML = (review) => {
   li.appendChild(comments);
 
   return li;
+};
+handleReviewForm = async e => {
+  const name = document.getElementById('user-name').value;
+  const rating = document.getElementById('rating-select').value;
+  const comments = document.getElementById('user-comment').value;
+  if(name !== '' && comments !== '') {
+    e.preventDefault();
+  }
+  await DBHelper.postReview(self.restaurant.id, {name, rating, comments}, async (data, error) => {
+    if(error) {
+      console.error(error);
+    } else {
+      await updateReviews(self.restaurant.id);
+      document.getElementById('dropdown-form').reset();
+      setRestaurantRating();
+    }
+  })
 };
 setRestaurantRating = () => {
   const starsContainer = document.getElementById('stars-container');
@@ -194,6 +216,8 @@ createFormToggle = () => {
   const header = document.getElementById('form-header');
   const toggleButton = document.createElement('button');
   const dropdownForm = document.getElementById('dropdown-form');
+  const sendButton = document.getElementById('review-submit');
+  sendButton.addEventListener('click', handleReviewForm);
   setRestaurantRating();
   dropdownForm.style.display = 'flex';
   const formRealHeight = dropdownForm.getBoundingClientRect().height;
@@ -250,3 +274,4 @@ formatDate = (date) => {
   const MINUTES = ("0" + date.getUTCMinutes()).slice(-2);
   return `${MONTH}/${DAY}/${FULL_YEAR} at ${HOURS}:${MINUTES}`;
 };
+
