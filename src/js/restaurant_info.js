@@ -1,4 +1,4 @@
-let restaurant, map, reviews;
+let restaurant, map, reviews = [];
 let isReviewFormOpen;
 /**
  * Initialize Google map, called from HTML.
@@ -17,6 +17,7 @@ window.initMap = async () => {
       );
       mapCover.coverMap();
       fillBreadcrumb();
+      createFormToggle();
     }
   });
 };
@@ -34,12 +35,11 @@ fetchRestaurantFromURL = async (callback) => {
     const error = 'No restaurant id in URL';
     callback(error, null);
   } else {
-    await updateRestaurant(id, callback);
+    await updateRestaurant(id);
     await updateReviews(id, callback);
-    createFormToggle();
   }
 };
-updateRestaurant = async (id, callback) => {
+updateRestaurant = async (id, callback = () => null) => {
   await DBHelper.fetchRestaurantById(id, (error, restaurant) => {
     self.restaurant = restaurant;
     if (!restaurant) {
@@ -153,10 +153,17 @@ createReviewHTML = (review) => {
   name.innerHTML = `from ${review.name}`;
   li.appendChild(name);
 
-  const date = document.createElement('p');
-  const dateValue = formatDate(new Date(review.createdAt));
-  date.innerHTML = `on ${dateValue}`;
-  li.appendChild(date);
+  if(review.isPending){
+    const pendingLabel = document.createElement('p');
+    pendingLabel.setAttribute('class', 'pending-label');
+    pendingLabel.innerHTML = 'Review is pending, awaiting connection';
+    li.appendChild(pendingLabel);
+  } else {
+    const date = document.createElement('p');
+    let dateValue = formatDate(new Date(review.createdAt));
+    date.innerHTML = `on ${dateValue}`;
+    li.appendChild(date);
+  }
 
   const rating = document.createElement('p');
   for (let i = 1; i <= 5; i++) {
@@ -184,9 +191,11 @@ handleReviewForm = async e => {
   const name = document.getElementById('user-name').value;
   const rating = document.getElementById('rating-select').value;
   const comments = document.getElementById('user-comment').value;
+  const restaurant_id = self.restaurant.id;
   if(name !== '' && comments !== '') {
     e.preventDefault();
-    await DBHelper.postReview(self.restaurant.id, {name, rating, comments}, async (data, error) => {
+    const reviewData = {restaurant_id, name, rating, comments};
+    const callback = async (error, data) => {
       if(error) {
         console.error(error);
       } else {
@@ -194,9 +203,22 @@ handleReviewForm = async e => {
         document.getElementById('dropdown-form').reset();
         setRestaurantRating();
       }
-    })
+    };
+    if(!navigator.onLine) {
+      await postponeReviewPost(reviewData, callback);
+    } else {
+      await DBHelper.postReview(reviewData, callback);
+    }
   }
 };
+postponeReviewPost = async ({restaurant_id, name, rating, comments}, callback) => {
+  document.getElementById('dropdown-form').reset();
+  setRestaurantRating();
+  self.reviews.push({restaurant_id, name, rating, comments, isPending: true});
+  fillReviewsHTML();
+  await DBHelper.postReviewWhenOnline({restaurant_id, name, rating, comments}, callback);
+};
+
 setRestaurantRating = () => {
   const starsContainer = document.getElementById('stars-container');
   const ratingSelector = document.getElementById('rating-select');
@@ -246,10 +268,10 @@ toggleForm = (formRealHeight = 500, animator) => {
 /**
  * Add restaurant name to the breadcrumb navigation menu
  */
-fillBreadcrumb = (restaurant=self.restaurant) => {
+fillBreadcrumb = (restaurant = self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.getElementById('restaurant-name-breadcrumb');
-  li.innerHTML = restaurant.name;
+  li.innerHTML = restaurant && restaurant.name || 'Restaurant information';
   breadcrumb.appendChild(li);
 };
 

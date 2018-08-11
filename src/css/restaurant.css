@@ -213,7 +213,13 @@
 #reviews-list li p {
   margin: 0 0 10px;
 }
-
+.pending-label {
+  border: none;
+  border-radius: 5px;
+  background: #ffd200;
+  padding: 5px 20px;
+  width: max-content;
+}
 #hours-table {
   width: 100%;
   border-collapse: collapse;

@@ -61,7 +61,26 @@ class DBHelper {
       }
     });
   }
-  static async postReview (restaurant_id, {name, rating, comments}, callback) {
+
+  static async postReviewWhenOnline (reviewData, callback) {
+    let storedReviews = localStorage.getItem('storedReviews');
+    if(!storedReviews) {
+      storedReviews = [];
+    } else {
+      storedReviews = JSON.parse(storedReviews);
+    }
+    storedReviews.push(JSON.stringify(reviewData));
+    localStorage.setItem('storedReviews', JSON.stringify(storedReviews));
+    window.addEventListener('online', async e => {
+      const awaitingReviews = JSON.parse(localStorage.getItem('storedReviews'));
+      for (const review of awaitingReviews) {
+        const parsedReview = JSON.parse(review);
+        await this.postReview(parsedReview, callback);
+      }
+      localStorage.setItem('storedReviews', '[]');
+    })
+  }
+  static async postReview (reviewData, callback) {
     const storeName = 'reviews';
     const url = DBHelper.DATABASE_URL + '/reviews/';
     fetch(url, {
@@ -70,9 +89,9 @@ class DBHelper {
         'Accept': 'application/JSON',
         'Content-Type': 'application/JSON'
       }),
-      body: JSON.stringify({ restaurant_id, name, rating, comments })
+      body: JSON.stringify(reviewData)
     }).then(response => {
-      if(response.status === 200) {
+      if(response.status === 200  || response.status === 201) {
         return response.json();
       } else {
         throw Error(response.statusText);
