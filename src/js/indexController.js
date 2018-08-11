@@ -25,14 +25,18 @@ class IdbController {
     });
     return this.dbPromise;
   }
-  storeData(data, storeName) {
+  storeData(data = [], storeName) {
     this.dbPromise.then(function(db) {
       if(!db) return;
       const tx = db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
-      data.forEach(item => {
-        store.put(item);
-      })
+      if(Array.isArray(data)) {
+        data.forEach(item => {
+          store.put(item);
+        })
+      } else {
+        store.put(data);
+      }
     });
   }
   fetchData(storeName) {

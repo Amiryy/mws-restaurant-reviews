@@ -79,6 +79,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
   const image = document.getElementById('restaurant-img');
   image.className = 'restaurant-img';
+  image.onerror = () => image.src = DBHelper.imageUrlForRestaurant(restaurant, true);
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   image.setAttribute('alt', `image of ${restaurant.name}`);
 
@@ -133,6 +134,8 @@ fillReviewsHTML = (reviews = self.reviews) => {
     container.appendChild(noReviews);
     return;
   }
+  title.innerText += ` (${reviews.length})`;
+
   const ul = document.createElement('ul');
   ul.setAttribute('id', 'reviews-list');
   reviews.reverse().forEach(review => {
@@ -183,16 +186,16 @@ handleReviewForm = async e => {
   const comments = document.getElementById('user-comment').value;
   if(name !== '' && comments !== '') {
     e.preventDefault();
+    await DBHelper.postReview(self.restaurant.id, {name, rating, comments}, async (data, error) => {
+      if(error) {
+        console.error(error);
+      } else {
+        await updateReviews(self.restaurant.id);
+        document.getElementById('dropdown-form').reset();
+        setRestaurantRating();
+      }
+    })
   }
-  await DBHelper.postReview(self.restaurant.id, {name, rating, comments}, async (data, error) => {
-    if(error) {
-      console.error(error);
-    } else {
-      await updateReviews(self.restaurant.id);
-      document.getElementById('dropdown-form').reset();
-      setRestaurantRating();
-    }
-  })
 };
 setRestaurantRating = () => {
   const starsContainer = document.getElementById('stars-container');

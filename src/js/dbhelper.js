@@ -53,7 +53,7 @@ class DBHelper {
       if(cachedData && cachedData.length > 0) {
         let data = cachedData;
         if(id) {
-          data = cachedData.find(r => Number(r.id) === Number(id));
+          data = cachedData.filter(r => Number(r.restaurant_id) === Number(id));
         }
         callback(null, data);
       } else {
