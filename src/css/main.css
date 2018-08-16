@@ -42,11 +42,11 @@ header {
 
 nav h1 {
   margin: 0 auto;
-  padding: 10px;
+  font-size: 0.8rem;
+  padding: 4px;
 }
 nav h1 a {
   color: #ffffff;
-  font-size: 1rem;
   font-weight: 200;
   letter-spacing: 10px;
   text-transform: uppercase;
