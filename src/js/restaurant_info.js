@@ -21,7 +21,16 @@ window.initMap = async () => {
     }
   });
 };
-
+window.addEventListener('online', async e => {
+  const awaitingReviews = JSON.parse(localStorage.getItem('storedReviews'));
+  if(Array.isArray(awaitingReviews)) {
+    for (const review of awaitingReviews) {
+      const parsedReview = JSON.parse(review);
+      await DBHelper.postReview(parsedReview, postReviewCallback);
+    }
+  }
+  localStorage.setItem('storedReviews', '[]');
+});
 /**
  * Get current restaurant from page URL.
  */
@@ -50,9 +59,25 @@ updateRestaurant = async (id, callback = () => null) => {
     callback(null)
   });
 };
-updateReviews = async (id, callback = () => null) => {
+postReviewCallback = async (error, data) => {
+  if(error) {
+    console.error(error);
+  } else {
+    await updateReviews();
+    document.getElementById('dropdown-form').reset();
+    setRestaurantRating();
+  }
+};
+updateReviews = async (id = self.restaurant.id, callback = () => null) => {
   await DBHelper.fetchReviews(id, (error, reviews) => {
     self.reviews = reviews;
+    const storedReviews = JSON.parse(localStorage.getItem('storedReviews'));
+    if(storedReviews) {
+      storedReviews.forEach(review => {
+        const {restaurant_id, name, rating, comments} = JSON.parse(review);
+        self.reviews.push({ restaurant_id, name, rating, comments, isPending: true})
+      })
+    }
     if (!reviews) {
       console.error(error);
       return;
@@ -195,19 +220,10 @@ handleReviewForm = async e => {
   if(name !== '' && comments !== '') {
     e.preventDefault();
     const reviewData = {restaurant_id, name, rating, comments};
-    const callback = async (error, data) => {
-      if(error) {
-        console.error(error);
-      } else {
-        await updateReviews(self.restaurant.id);
-        document.getElementById('dropdown-form').reset();
-        setRestaurantRating();
-      }
-    };
     if(!navigator.onLine) {
-      await postponeReviewPost(reviewData, callback);
+      await postponeReviewPost(reviewData);
     } else {
-      await DBHelper.postReview(reviewData, callback);
+      await DBHelper.postReview(reviewData, postReviewCallback)
     }
   }
 };
@@ -216,7 +232,7 @@ postponeReviewPost = async ({restaurant_id, name, rating, comments}, callback) =
   setRestaurantRating();
   self.reviews.push({restaurant_id, name, rating, comments, isPending: true});
   fillReviewsHTML();
-  await DBHelper.postReviewWhenOnline({restaurant_id, name, rating, comments}, callback);
+  await DBHelper.storeReviewsInStorage({restaurant_id, name, rating, comments}, callback);
 };
 
 setRestaurantRating = () => {

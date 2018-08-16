@@ -62,7 +62,7 @@ class DBHelper {
     });
   }
 
-  static async postReviewWhenOnline (reviewData, callback) {
+  static async storeReviewsInStorage (reviewData) {
     let storedReviews = localStorage.getItem('storedReviews');
     if(!storedReviews) {
       storedReviews = [];
@@ -71,14 +71,6 @@ class DBHelper {
     }
     storedReviews.push(JSON.stringify(reviewData));
     localStorage.setItem('storedReviews', JSON.stringify(storedReviews));
-    window.addEventListener('online', async e => {
-      const awaitingReviews = JSON.parse(localStorage.getItem('storedReviews'));
-      for (const review of awaitingReviews) {
-        const parsedReview = JSON.parse(review);
-        await this.postReview(parsedReview, callback);
-      }
-      localStorage.setItem('storedReviews', '[]');
-    })
   }
   static async postReview (reviewData, callback) {
     const storeName = 'reviews';
