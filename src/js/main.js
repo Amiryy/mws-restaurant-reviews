@@ -9,15 +9,23 @@ let restaurants,
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', async (event) => {
   bLazy = new Blazy({
     selector: '.b-lazy',
     success: lazyLoadSuccessFul
   });
   setTimeout(() => revalidateBlazy(bLazy), 500);
   checkViewportAdaptations();
-  fetchNeighborhoods();
-  fetchCuisines();
+  await fetchNeighborhoods();
+  await fetchCuisines();
+});
+
+window.addEventListener('online', async e => {
+  await syncFavoriteSettings();
+  await handleAwaitingReviews();
+  localStorage.setItem(FAVORITE_STATE_STORAGE, '[]');
+  localStorage.setItem(AWAITING_REVIEWS_STORAGE, '[]');
+
 });
 
 function revalidateBlazy(bLazy) {
@@ -32,6 +40,28 @@ function lazyLoadSuccessFul(element) {
     element.className = element.className.replace('loading', '');
   }, 200);
 }
+
+syncFavoriteSettings = async () => {
+  const states = JSON.parse(localStorage.getItem(FAVORITE_STATE_STORAGE));
+  if(Array.isArray(states)) {
+    for (const data of states) {
+      const { restaurantId, isFavorite } = JSON.parse(data);
+      const currentRestaurantData = self.restaurants.find(restaurant => restaurant.id === restaurantId);
+      if(currentRestaurantData) currentRestaurantData.is_favorite = isFavorite;
+      await DBHelper.setFavoriteRestaurant(restaurantId, isFavorite);
+    }
+    if(states.length) fillRestaurantsHTML();
+  }
+};
+handleAwaitingReviews = async () => {
+  const awaitingReviews = JSON.parse(localStorage.getItem(AWAITING_REVIEWS_STORAGE));
+  if(Array.isArray(awaitingReviews)) {
+    for (const review of awaitingReviews) {
+      const parsedReview = JSON.parse(review);
+      await DBHelper.postReview(parsedReview, () => null);
+    }
+  }
+};
 
 checkViewportAdaptations = () => {
   if(!window.onresize) {
@@ -68,8 +98,8 @@ toggleFiltersDropdown = (filtersRealHeight, animator) => {
 /**
  * Fetch all neighborhoods and set their HTML.
  */
-fetchNeighborhoods = () => {
-  DBHelper.fetchNeighborhoods((error, neighborhoods) => {
+fetchNeighborhoods = async () => {
+ await DBHelper.fetchNeighborhoods((error, neighborhoods) => {
     if (error) { // Got an error
       console.error(error);
     } else {
@@ -98,8 +128,8 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
 /**
  * Fetch all cuisines and set their HTML.
  */
-fetchCuisines = () => {
-  DBHelper.fetchCuisines((error, cuisines) => {
+fetchCuisines = async () => {
+  await DBHelper.fetchCuisines((error, cuisines) => {
     if (error) { // Got an error!
       console.error(error);
     } else {
@@ -126,34 +156,42 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
+window.initMap = async () => {
   const mapContainer = document.getElementById('map-container');
   const map = document.getElementById('map');
   const mapCover = new MapCover(mapContainer, map, addMarkersToMap);
   mapCover.coverMap();
-  updateRestaurants();
+  await updateRestaurants();
 };
-toggleFavorites = () => {
+toggleFavorite = async (id, isFavorite) => {
+  if(!navigator.onLine) {
+    await DBHelper.storeFavoriteState(id, isFavorite);
+  } else {
+    await DBHelper.setFavoriteRestaurant(id, isFavorite);
+  }
+};
+
+toggleFavorites = async () => {
   const fToggle = document.getElementById('favorites-toggle-heart');
   const isChecked = fToggle.getAttribute('aria-checked') === 'true';
   fToggle.setAttribute('aria-checked', "" + !isChecked);
-  updateRestaurants(!isChecked);
+  await updateRestaurants(!isChecked);
 };
 /**
  * Update page and map for current restaurants.
  */
-updateRestaurants = (isFavsChecked = false) => {
+updateRestaurants = async (isFavsChecked = false) => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
   const cIndex = cSelect.selectedIndex;
   const nIndex = nSelect.selectedIndex;
   const cuisine = cSelect[cIndex].value;
   const neighborhood = nSelect[nIndex].value;
-  DBHelper.fetchRestaurantByFilters(cuisine, neighborhood, isFavsChecked, (error, restaurants) => {
+  await DBHelper.fetchRestaurantByFilters(cuisine, neighborhood, isFavsChecked, async (error, restaurants) => {
     if (error) { // Got an error!
       console.error(error);
     } else {
-      resetRestaurants(restaurants);
+      await resetRestaurants(restaurants);
       addMarkersToMap();
       fillRestaurantsHTML();
     }
@@ -163,7 +201,7 @@ updateRestaurants = (isFavsChecked = false) => {
 /**
  * Clear current restaurants, their HTML and remove their map markers.
  */
-resetRestaurants = (restaurants) => {
+resetRestaurants = async (restaurants) => {
   // Remove all restaurants
   self.restaurants = [];
   const ul = document.getElementById('restaurants-list');
@@ -173,6 +211,8 @@ resetRestaurants = (restaurants) => {
   self.markers.forEach(m => m.setMap(null));
   self.markers = [];
   self.restaurants = restaurants;
+  await syncFavoriteSettings();
+  await handleAwaitingReviews()
 };
 
 /**
@@ -222,7 +262,7 @@ createRestaurantHTML = (restaurant) => {
   heart.addEventListener('click', async e => {
     const isChecked = e.target.getAttribute('aria-checked') === 'true';
     e.target.setAttribute('aria-checked', "" + !isChecked);
-    await DBHelper.setFavoriteRestaurant(restaurant.id, !isChecked);
+    await toggleFavorite(restaurant.id, !isChecked);
   });
   headerContainer.append(heart);
 

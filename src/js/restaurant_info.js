@@ -1,5 +1,6 @@
 let restaurant, map, reviews = [];
 let isReviewFormOpen;
+
 /**
  * Initialize Google map, called from HTML.
  */
@@ -21,15 +22,12 @@ window.initMap = async () => {
     }
   });
 };
+
 window.addEventListener('online', async e => {
-  const awaitingReviews = JSON.parse(localStorage.getItem('storedReviews'));
-  if(Array.isArray(awaitingReviews)) {
-    for (const review of awaitingReviews) {
-      const parsedReview = JSON.parse(review);
-      await DBHelper.postReview(parsedReview, postReviewCallback);
-    }
-  }
-  localStorage.setItem('storedReviews', '[]');
+  await syncFavoriteSettings();
+  await handleAwaitingReviews();
+  localStorage.setItem(FAVORITE_STATE_STORAGE, '[]');
+  localStorage.setItem(AWAITING_REVIEWS_STORAGE, '[]');
 });
 /**
  * Get current restaurant from page URL.
@@ -46,6 +44,9 @@ fetchRestaurantFromURL = async (callback) => {
   } else {
     await updateRestaurant(id);
     await updateReviews(id, callback);
+
+    await syncFavoriteSettings();
+    await handleAwaitingReviews()
   }
 };
 updateRestaurant = async (id, callback = () => null) => {
@@ -59,6 +60,28 @@ updateRestaurant = async (id, callback = () => null) => {
     callback(null)
   });
 };
+syncFavoriteSettings = async () => {
+  const states = JSON.parse(localStorage.getItem(FAVORITE_STATE_STORAGE));
+  if(Array.isArray(states)) {
+    for (const data of states) {
+      const { restaurantId, isFavorite } = JSON.parse(data);
+      await DBHelper.setFavoriteRestaurant(restaurantId, isFavorite);
+      if(restaurantId === self.restaurant.id) {
+        self.restaurant.is_favorite = isFavorite;
+      }
+    }
+    if(states.length) fillRestaurantHTML();
+  }
+};
+handleAwaitingReviews = async () => {
+  const awaitingReviews = JSON.parse(localStorage.getItem(AWAITING_REVIEWS_STORAGE));
+  if(Array.isArray(awaitingReviews)) {
+    for (const review of awaitingReviews) {
+      const parsedReview = JSON.parse(review);
+      await DBHelper.postReview(parsedReview, postReviewCallback);
+    }
+  }
+};
 postReviewCallback = async (error, data) => {
   if(error) {
     console.error(error);
@@ -71,8 +94,8 @@ postReviewCallback = async (error, data) => {
 updateReviews = async (id = self.restaurant.id, callback = () => null) => {
   await DBHelper.fetchReviews(id, (error, reviews) => {
     self.reviews = reviews;
-    const storedReviews = JSON.parse(localStorage.getItem('storedReviews'));
-    if(storedReviews) {
+    const storedReviews = JSON.parse(localStorage.getItem(AWAITING_REVIEWS_STORAGE));
+    if(Array.isArray(storedReviews)) {
       storedReviews.forEach(review => {
         const {restaurant_id, name, rating, comments} = JSON.parse(review);
         self.reviews.push({ restaurant_id, name, rating, comments, isPending: true})
@@ -94,11 +117,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.innerHTML = restaurant.name;
   const heart = document.getElementById('favorite-toggle-heart');
   heart.setAttribute('aria-checked', '' + restaurant.is_favorite);
-  heart.addEventListener('click', async (e) => {
-    const isChecked = e.target.getAttribute('aria-checked') === 'true';
-    e.target.setAttribute('aria-checked', "" + !isChecked);
-    await DBHelper.setFavoriteRestaurant(restaurant.id, !isChecked);
-  });
+  heart.addEventListener('click', toggleFavorite);
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
@@ -117,6 +136,15 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   }
 };
 
+toggleFavorite = async (e) => {
+  const isChecked = e.target.getAttribute('aria-checked') === 'true';
+  e.target.setAttribute('aria-checked', "" + !isChecked);
+  if(!navigator.onLine) {
+    await DBHelper.storeFavoriteState(self.restaurant.id, !isChecked);
+  } else {
+    await DBHelper.setFavoriteRestaurant(self.restaurant.id, !isChecked);
+  }
+};
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
  */
@@ -227,6 +255,7 @@ handleReviewForm = async e => {
     }
   }
 };
+
 postponeReviewPost = async ({restaurant_id, name, rating, comments}, callback) => {
   document.getElementById('dropdown-form').reset();
   setRestaurantRating();

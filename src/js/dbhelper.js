@@ -1,4 +1,5 @@
-
+const FAVORITE_STATE_STORAGE = "storedFavoriteStates";
+const AWAITING_REVIEWS_STORAGE = 'storedReviews';
 // Common database helper functions.
 class DBHelper {
   // Database URL.
@@ -25,9 +26,21 @@ class DBHelper {
       callback(null, data);
     }).catch(error => {
       if(cachedData && cachedData.length > 0) {
-        let data = cachedData;
-        if(id) {
-          data = cachedData.find(r => Number(r.id) === Number(id));
+        const storedFavoriteStates = JSON.parse(localStorage.getItem(FAVORITE_STATE_STORAGE));
+        let data = id ? cachedData.find(r => Number(r.id) === Number(id)) : cachedData;
+        if(Array.isArray(storedFavoriteStates)) {
+          for(const state of storedFavoriteStates) {
+            const parsedState = JSON.parse(state);
+            if(id && parsedState.restaurantId === data.id) {
+              data.is_favorite = parsedState.isFavorite;
+              break;
+            } else if(!id) {
+              const outdatedData = cachedData.find(restaurant => restaurant.id === parsedState.restaurantId);
+              if(outdatedData) {
+                outdatedData.is_favorite = parsedState.isFavorite;
+              }
+            }
+          }
         }
         callback(null, data);
       } else {
@@ -61,16 +74,26 @@ class DBHelper {
       }
     });
   }
-
+  static async storeFavoriteState (restaurantId, isFavorite) {
+    let storedStates = localStorage.getItem(FAVORITE_STATE_STORAGE);
+    if(!storedStates) {
+      storedStates = [];
+    } else {
+      storedStates = JSON.parse(storedStates)
+        .filter(state => JSON.parse(state).restaurantId !== restaurantId);
+    }
+    storedStates.push(JSON.stringify({restaurantId, isFavorite}));
+    localStorage.setItem(FAVORITE_STATE_STORAGE, JSON.stringify(storedStates));
+  }
   static async storeReviewsInStorage (reviewData) {
-    let storedReviews = localStorage.getItem('storedReviews');
+    let storedReviews = localStorage.getItem(AWAITING_REVIEWS_STORAGE);
     if(!storedReviews) {
       storedReviews = [];
     } else {
       storedReviews = JSON.parse(storedReviews);
     }
     storedReviews.push(JSON.stringify(reviewData));
-    localStorage.setItem('storedReviews', JSON.stringify(storedReviews));
+    localStorage.setItem(AWAITING_REVIEWS_STORAGE, JSON.stringify(storedReviews));
   }
   static async postReview (reviewData, callback) {
     const storeName = 'reviews';
