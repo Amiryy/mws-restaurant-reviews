@@ -215,10 +215,11 @@
 }
 .pending-label {
   border: none;
+  font-size: 0.85rem;
   border-radius: 5px;
   background: #ffd200;
   padding: 5px 20px;
-  width: max-content;
+  max-width: 350px;
 }
 #hours-table {
   width: 100%;
