@@ -2,6 +2,7 @@
 
 #breadcrumb {
   padding: 0px 40px;
+  margin-top: 60px;
   list-style: none;
   width: 100%;
 }
@@ -32,10 +33,9 @@
 }
 /* ====================== Restaurant Details ====================== */
 .inside header {
-  position: fixed;
-  top: 0;
+  height: 85px;
+  position: absolute;
   width: 100%;
-  z-index: 1000;
 }
 .inside #map-container {
   background: blue none repeat scroll 0 0;
