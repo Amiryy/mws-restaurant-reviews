@@ -258,7 +258,7 @@ createRestaurantHTML = (restaurant) => {
   heart.setAttribute('class', 'heart-checkbox');
   heart.setAttribute('role', 'checkbox');
   heart.setAttribute('aria-checked', '' + restaurant.is_favorite);
-  heart.setAttribute('aria-label', `${restaurant.is_favorite ? 'unset' : 'set'} ${restaurant.name} as favorite`);
+  heart.setAttribute('aria-label', `set ${restaurant.name} as favorite`);
   heart.addEventListener('click', async e => {
     const isChecked = e.target.getAttribute('aria-checked') === 'true';
     e.target.setAttribute('aria-checked', "" + !isChecked);

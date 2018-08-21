@@ -100,12 +100,15 @@
 }
 #form-header {
   display: flex;
-  font-weight: 300;
+  font-size: 1.2rem;
+  border: none;
+  background-color: transparent;
+  font-weight: 600;
   width: 100%;
   cursor: pointer;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  padding: 20px 20px 20px 35px;
   transition: all 0.1s ease;
 }
 #form-header:hover {
@@ -113,8 +116,6 @@
   color: #f6f6f6;
 }
 #form-header h3 {
-  margin: 0;
-  padding-left: 20px;
 }
 #toggle-arrow {
   border: none;

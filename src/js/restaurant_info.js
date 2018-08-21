@@ -203,6 +203,7 @@ fillReviewsHTML = (reviews = self.reviews) => {
 createReviewHTML = (review) => {
   const li = document.createElement('li');
   const name = document.createElement('p');
+  li.setAttribute('tabIndex', '0');
   name.innerHTML = `from ${review.name}`;
   li.appendChild(name);
 
@@ -280,6 +281,17 @@ setRestaurantRating = () => {
       star.innerHTML = '&#9734';
     }
     starsContainer.appendChild(star);
+    starsContainer.setAttribute('aria-hidden', 'true')
+  }
+};
+toggleTabIndex = (elements, value = null) => {
+  for(let i = 0; i < elements.length; i++) {
+    const child = elements[i];
+    const currentValue = child.getAttribute('tabIndex');
+    const toggle = value || (
+      currentValue && currentValue === '-1' ? '0' : '-1'
+    );
+    child.setAttribute('tabIndex', toggle);
   }
 };
 createFormToggle = () => {
@@ -292,9 +304,13 @@ createFormToggle = () => {
   dropdownForm.style.display = 'flex';
   const formRealHeight = dropdownForm.getBoundingClientRect().height;
   dropdownForm.style.height = '0';
+  const focusElements = document.querySelectorAll('.form-focus-element');
+  toggleTabIndex(focusElements, '-1');
   const animator = new Animator(dropdownForm);
   isReviewFormOpen = false;
   toggleButton.setAttribute('id', 'toggle-arrow');
+  toggleButton.setAttribute('aria-hidden', 'true');
+  toggleButton.setAttribute('tabIndex', '-1');
   toggleButton.innerHTML = '&#x25BC';
   header.appendChild(toggleButton);
   header.addEventListener('click', () => toggleForm(formRealHeight + 40, animator))
@@ -304,8 +320,10 @@ toggleForm = (formRealHeight = 500, animator) => {
   const toggleClass = toggleButton.getAttribute('class');
   const dropdownForm = document.getElementById('dropdown-form');
   const toggleButtonRotation = toggleClass === 'rotated' ? '' : 'rotated';
+  const focusElements = document.querySelectorAll('.form-focus-element');
   dropdownForm.style.padding = isReviewFormOpen ? '0' : '40px';
   dropdownForm.style.opacity = isReviewFormOpen ? '0' : '1';
+  toggleTabIndex(focusElements);
   animator.toggleDropdown(0, formRealHeight, 100, isReviewFormOpen);
   toggleButton.setAttribute('class', toggleButtonRotation);
   isReviewFormOpen = !isReviewFormOpen;

@@ -124,11 +124,11 @@
   <header>
     <!-- Beginning nav -->
     <nav>
-      <h1><a tabindex="1" id="header" href="/">Restaurant Reviews</a></h1>
+      <h1><a id="header" href="/">Restaurant Reviews</a></h1>
     </nav>
     <!-- Beginning breadcrumb -->
     <ul id="breadcrumb" role="navigation" aria-label="breadcrumb navigation">
-      <li><a tabindex="1" href="/">Home</a></li>
+      <li><a href="/">Home</a></li>
 			<li id="restaurant-name-breadcrumb"></li>
     </ul>
     <!-- End breadcrumb -->
@@ -141,41 +141,37 @@
     <!-- Beginning restaurant -->
     <section id="restaurant-container">
 			<div class="restaurant-card-header">
-				<h2 tabindex="3" id="restaurant-name"></h2>
+				<h2 tabIndex='0' id="restaurant-name"></h2>
 				<button id="favorite-toggle-heart"
+								aria-label="set restaurant favorite"
 								class="heart-checkbox"
 								role="checkbox">♥</button>
 			</div>
-      <img tabindex="3" id="restaurant-img">
-      <p tabindex="3" id="restaurant-cuisine"></p>
-      <p tabindex="3" id="restaurant-address"></p>
+      <img id="restaurant-img">
+      <p tabIndex='0' id="restaurant-cuisine"></p>
+      <p tabIndex='0' id="restaurant-address"></p>
     </section>
 		<!-- End restaurant -->
-		<a class='screen-reader-content'
-			 href="#breadcrumb"
-			 aria-label="skip map to navigation"></a>
 		<!-- Beginning map -->
 		<section id="map-container">
 			<div id="map" aria-label="map of restaurant locations" role="application"></div>
 		</section>
 		<!-- End map -->
 		<!-- Beginning hours -->
-		<section tabindex="3" id="hours-container">
+		<section tabIndex='0' id="hours-container">
 			<h3>Opening hours</h3>
 			<table id="hours-table"></table>
 		</section>
 		<!-- End hours -->
-		<section tabindex="3" id="review-form">
-			<div id="form-header">
-				<h3>Write a review</h3>
-			</div>
+		<section id="review-form">
+			<button id="form-header">Write a review</button>
 			<div class="content">
 				<form id="dropdown-form">
 					<label for="user-name">Your Name</label>
-					<input id='user-name' type="text" required/>
+					<input class="form-focus-element" id='user-name' type="text" required/>
 					<div class="rating-container">
 						<label for="rating-select">Your Rating:</label>
-						<select id="rating-select" onchange="setRestaurantRating()">
+						<select class="form-focus-element" id="rating-select" onchange="setRestaurantRating()">
 							<option value="1">1</option>
 							<option value="2">2</option>
 							<option value="3">3</option>
@@ -185,13 +181,13 @@
 					</div>
 					<div id="stars-container"></div>
 					<label for="user-comment">Comment</label>
-					<textarea id="user-comment" required></textarea>
-					<button id='review-submit' type="submit">Submit</button>
+					<textarea class="form-focus-element" id="user-comment" required></textarea>
+					<button class="form-focus-element" id='review-submit' type="submit">Submit</button>
 				</form>
 			</div>
 		</section>
     <!-- Beginning reviews -->
-    <section tabindex="3" id="reviews-container">
+    <section tabIndex="0" id="reviews-container">
     </section>
     <!-- End reviews -->
   </main>
