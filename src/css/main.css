@@ -40,12 +40,12 @@ header {
 
 /* ====================== Navigation ====================== */
 
-nav h1 {
+nav h1, .main-header h1 {
   margin: 0 auto;
   font-size: 0.8rem;
   padding: 4px;
 }
-nav h1 a {
+nav h1 a, .main-header h1 a {
   color: #ffffff;
   font-weight: 200;
   letter-spacing: 10px;
