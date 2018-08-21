@@ -22,7 +22,7 @@ class DBHelper {
     if (id) url += id;
     if(isFavorite) url += "?is_favorite=true";
     const cachedData = await self.idbController.fetchData(storeName);
-    fetch(url.href).then(this.handleResponse).then(data => {
+    fetch(url).then(this.handleResponse).then(data => {
       self.idbController.storeData(data, storeName);
       callback(null, data);
     }).catch(error => {
@@ -54,7 +54,7 @@ class DBHelper {
     let url = new URL(DBHelper.DATABASE_URL + '/reviews/');
     if (id) url += `?restaurant_id=${id}`;
     const cachedData = await self.idbController.fetchData(storeName);
-    fetch(url.href).then(this.handleResponse).then(data => {
+    fetch(url).then(this.handleResponse).then(data => {
       self.idbController.storeData(data, storeName);
       callback(null, data);
     }).catch(error => {
@@ -93,7 +93,7 @@ class DBHelper {
   static async postReview (reviewData, callback) {
     const storeName = 'reviews';
     const url = new URL(DBHelper.DATABASE_URL + '/reviews/');
-    fetch(url.href, {
+    fetch(url, {
       method: 'post',
       headers: new Headers({
         'Accept': 'application/JSON',
@@ -111,7 +111,7 @@ class DBHelper {
   static async setFavoriteRestaurant (id, isFavorite) {
     const storeName = 'restaurants';
     const url = new URL(DBHelper.DATABASE_URL + '/restaurants/' + id + '/?is_favorite=' + isFavorite);
-    fetch(url.href, {
+    fetch(url, {
       method: 'put',
       headers: new Headers({
         'Accept': 'application/JSON'

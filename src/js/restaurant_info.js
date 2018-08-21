@@ -225,8 +225,7 @@ createReviewHTML = (review) => {
     if(i <= review.rating){
       //Convert rating to stars
       star.innerHTML = '&#9733';
-      star.style.color = '#FFD200';
-      star.style.textShadow = '1px 1px #7a7a7a';
+      star.style.color = '#006696';
     } else {
       star.innerHTML = '&#9734';
     }
@@ -275,8 +274,7 @@ setRestaurantRating = () => {
     const star = document.createElement('span');
     if(i <= currentUserRating) {
       star.innerHTML = '&#9733';
-      star.style.color = '#FFD200';
-      star.style.textShadow = '1px 1px #7a7a7a';
+      star.style.color = '#006696';
     } else {
       star.innerHTML = '&#9734';
     }
