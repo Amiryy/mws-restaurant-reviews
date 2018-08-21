@@ -8,20 +8,21 @@ class DBHelper {
     const port = 1337; // Change this to your server port
     return `http://localhost:${port}`;
   }
+  static handleResponse(response) {
+    if(response.status === 200) {
+      return response.json();
+    } else {
+      throw Error(response.statusText);
+    }
+  }
   // Fetch all restaurants.
   static async fetchRestaurants(callback, id = null, isFavorite = null) {
     const storeName = 'restaurants';
-    let url = DBHelper.DATABASE_URL + '/restaurants/';
+    let url = new URL(DBHelper.DATABASE_URL + '/restaurants/');
     if (id) url += id;
     if(isFavorite) url += "?is_favorite=true";
     const cachedData = await self.idbController.fetchData(storeName);
-    fetch(url).then(response => {
-      if(response.status === 200) {
-        return response.json();
-      } else {
-        throw Error(response.statusText);
-      }
-    }).then(data => {
+    fetch(url.href).then(this.handleResponse).then(data => {
       self.idbController.storeData(data, storeName);
       callback(null, data);
     }).catch(error => {
@@ -50,16 +51,10 @@ class DBHelper {
   }
   static async fetchReviews(id = null, callback) {
     const storeName = 'reviews';
-    let url = DBHelper.DATABASE_URL + '/reviews/';
+    let url = new URL(DBHelper.DATABASE_URL + '/reviews/');
     if (id) url += `?restaurant_id=${id}`;
     const cachedData = await self.idbController.fetchData(storeName);
-    fetch(url).then(response => {
-      if(response.status === 200) {
-        return response.json();
-      } else {
-        throw Error(response.statusText);
-      }
-    }).then(data => {
+    fetch(url.href).then(this.handleResponse).then(data => {
       self.idbController.storeData(data, storeName);
       callback(null, data);
     }).catch(error => {
@@ -97,21 +92,15 @@ class DBHelper {
   }
   static async postReview (reviewData, callback) {
     const storeName = 'reviews';
-    const url = DBHelper.DATABASE_URL + '/reviews/';
-    fetch(url, {
+    const url = new URL(DBHelper.DATABASE_URL + '/reviews/');
+    fetch(url.href, {
       method: 'post',
       headers: new Headers({
         'Accept': 'application/JSON',
         'Content-Type': 'application/JSON'
       }),
       body: JSON.stringify(reviewData)
-    }).then(response => {
-      if(response.status === 200  || response.status === 201) {
-        return response.json();
-      } else {
-        throw Error(response.statusText);
-      }
-    }).then(data => {
+    }).then(this.handleResponse).then(data => {
       self.idbController.storeData(data, storeName);
       callback(null, data);
     }).catch(error => {
@@ -121,19 +110,13 @@ class DBHelper {
   }
   static async setFavoriteRestaurant (id, isFavorite) {
     const storeName = 'restaurants';
-    const url = DBHelper.DATABASE_URL + '/restaurants/' + id + '/?is_favorite=' + isFavorite;
-    fetch(url, {
+    const url = new URL(DBHelper.DATABASE_URL + '/restaurants/' + id + '/?is_favorite=' + isFavorite);
+    fetch(url.href, {
       method: 'put',
       headers: new Headers({
         'Accept': 'application/JSON'
       }),
-    }).then(response => {
-      if(response.status === 200) {
-        return response.json();
-      } else {
-        throw Error(response.statusText);
-      }
-    }).then(data => {
+    }).then(this.handleResponse).then(data => {
       self.idbController.storeData(data, storeName);
     }).catch(error => {
       console.error(error);
@@ -229,5 +212,4 @@ class DBHelper {
     );
     return marker;
   }
-
 }
